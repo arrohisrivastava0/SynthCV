@@ -18,7 +18,7 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
   bool _rememberMe = false;
   bool _isLoading = false;
   late TabController _tabController;
-  late AnimationController _controller;
+  // late AnimationController _controller;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     // _controller = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
-    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    // _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _tabController = TabController(length: 2, vsync: this);
     _fadeController = AnimationController(
@@ -35,6 +35,12 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
     );
     _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
     _fadeController.forward();
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+    );
   }
 
   void _togglePasswordVisibility() {
@@ -54,7 +60,11 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
     } catch (e) {
-      _showErrorSnackBar('Email login failed: $e');
+      if (e.toString().contains('Invalid login credentials')) {
+        _showErrorSnackBar('Invalid email or password');
+      } else {
+        _showErrorSnackBar('Login failed: $e');
+      }
     }
 
     setState(() => _isLoading = false);
@@ -115,15 +125,11 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
     setState(() => _isLoading = false);
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
-    );
-  }
+
 
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
     _fadeController.dispose(); // Add this
     super.dispose();
   }
