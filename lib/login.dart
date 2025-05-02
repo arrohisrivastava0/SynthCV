@@ -1,6 +1,7 @@
 // Add these imports if not already present
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart';
 
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         data: {
-          'full_name': _nameController.text.trim(),
+          'name': _nameController.text.trim(),
         },
       );
       if (response.user != null) {
@@ -123,6 +124,18 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
     }
 
     setState(() => _isLoading = false);
+  }
+
+  void saveLoginState(String username, String password, bool rememberMe) {
+    var box = Hive.box('loginBox');
+    box.put('rememberMe', rememberMe);
+    if (rememberMe) {
+      box.put('username', username);
+      box.put('password', password); // Note: not secure for sensitive info
+    } else {
+      box.delete('username');
+      box.delete('password');
+    }
   }
 
 

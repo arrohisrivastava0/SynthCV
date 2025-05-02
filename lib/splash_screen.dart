@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'dart:async';
 import 'login.dart';
 
@@ -13,6 +14,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
+
+  void checkLoginStatus(BuildContext context) {
+    var box = Hive.box('loginBox');
+    bool rememberMe = box.get('rememberMe', defaultValue: false);
+    if (rememberMe) {
+      String username = box.get('username');
+      String password = box.get('password');
+      // Validate credentials or navigate to home
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
 
 
   @override
