@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../home_screen.dart';
+import 'package:synthcv/screens/home_screen.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -58,6 +59,11 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
         password: _passwordController.text.trim(),
       );
       if (response.user != null) {
+        saveLoginState(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          _rememberMe,
+        );
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
     } catch (e) {

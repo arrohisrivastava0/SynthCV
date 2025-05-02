@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synthcv/screens/home_screen.dart';
 import 'dart:async';
 import 'auth/login.dart';
 
@@ -29,6 +31,53 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   _controller = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 2),
+  //   )..repeat(reverse: true);
+  //
+  //   _scaleAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+  //     CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+  //   );
+  //
+  //   _fadeAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+  //     CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+  //   );
+  //
+  //   // ✅ Using Future.delayed instead of Timer
+  //   Future.delayed(const Duration(seconds: 3), () {
+  //     if (!mounted) return; // ensures widget is still in tree
+  //     Navigator.of(context).pushReplacement(
+  //       PageRouteBuilder(
+  //         transitionDuration: const Duration(milliseconds: 800),
+  //         pageBuilder: (context, animation, secondaryAnimation) => const Login(),
+  //         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+  //           final offsetAnimation = Tween<Offset>(
+  //             begin: const Offset(0, 0.2),
+  //             end: Offset.zero,
+  //           ).animate(animation);
+  //           final fadeAnimation = Tween<double>(
+  //             begin: 0,
+  //             end: 1,
+  //           ).animate(animation);
+  //
+  //           return SlideTransition(
+  //             position: offsetAnimation,
+  //             child: FadeTransition(
+  //               opacity: fadeAnimation,
+  //               child: child,
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     );
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -46,35 +95,39 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // ✅ Using Future.delayed instead of Timer
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return; // ensures widget is still in tree
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) => const Login(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            final offsetAnimation = Tween<Offset>(
-              begin: const Offset(0, 0.2),
-              end: Offset.zero,
-            ).animate(animation);
-            final fadeAnimation = Tween<double>(
-              begin: 0,
-              end: 1,
-            ).animate(animation);
+    Future.delayed(const Duration(seconds: 3), () async {
+      if (!mounted) return;
 
-            return SlideTransition(
-              position: offsetAnimation,
-              child: FadeTransition(
-                opacity: fadeAnimation,
-                child: child,
-              ),
-            );
-          },
-        ),
+      final box = Hive.box('loginBox');
+      final rememberMe = box.get('rememberMe', defaultValue: false);
+
+      if (rememberMe) {
+        final email = box.get('username');
+        final password = box.get('password');
+
+        try {
+          await Supabase.instance.client.auth.signInWithPassword(
+            email: email,
+            password: password,
+          );
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => HomeScreen()),
+          );
+        } catch (_) {
+          // If auto-login fails, fall through to login screen
+        }
+      }
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
       );
     });
   }
+
 
 
   @override
