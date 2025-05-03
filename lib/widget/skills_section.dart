@@ -106,7 +106,7 @@ class _SkillsSectionState extends State<SkillsSection> {
               child: TextButton.icon(
                 onPressed: () => _addSkill(entry.key),
                 icon: const Icon(Icons.add, color: Colors.cyanAccent),
-                label: const Text("Add Skill +", style: TextStyle(color: Colors.cyanAccent)),
+                label: const Text("Add Skill", style: TextStyle(color: Colors.cyanAccent)),
               ),
             ),
           ]);
@@ -117,7 +117,7 @@ class _SkillsSectionState extends State<SkillsSection> {
           child: TextButton.icon(
             onPressed: _promptNewSkillSection,
             icon: const Icon(Icons.playlist_add, color: Colors.purpleAccent),
-            label: const Text("Add Skill Section +", style: TextStyle(color: Colors.purpleAccent)),
+            label: const Text("Add Skill Section", style: TextStyle(color: Colors.purpleAccent)),
           ),
         ),
       ],
