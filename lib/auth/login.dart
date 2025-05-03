@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synthcv/resume/upload_resume_screen.dart';
 import 'package:synthcv/screens/home_screen.dart';
 
 
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
           _passwordController.text.trim(),
           true,
         );
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UploadResumeScreen()));
       } else {
         _showErrorSnackBar('Google login failed');
       }
