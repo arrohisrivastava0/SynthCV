@@ -101,6 +101,11 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
       );
 
       if (response.user != null) {
+        saveLoginState(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          true,
+        );
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       } else {
         _showErrorSnackBar('Google login failed');
@@ -123,6 +128,14 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
         },
       );
       if (response.user != null) {
+        final box = Hive.box('loginBox');
+        box.put('rememberMe', true);
+        box.put('loginType', 'google'); // mark the type of login
+        saveLoginState(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          _rememberMe,
+        );
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
     } catch (e) {
