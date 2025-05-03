@@ -61,28 +61,68 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Manual Resume Form')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              textField(nameController, 'Full Name'),
-              textField(emailController, 'Email'),
-              textField(phoneController, 'Phone'),
-              textField(educationController, 'Education (Degree, College, Year)', maxLines: 2),
-              textField(experienceController, 'Experience (Role, Company, Duration)', maxLines: 2),
-              textField(skillsController, 'Skills (comma separated)'),
-              textField(projectsController, 'Projects (Title + Description)', maxLines: 3),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isLoading ? null : submitResume,
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Submit Resume'),
-              ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF121212), // deep dark base
+              Color(0xFF1A1B2F), // subtle bluish tone
             ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                _buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
+                _buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
+                _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                textField(nameController, 'Full Name'),
+                textField(emailController, 'Email'),
+                textField(phoneController, 'Phone'),
+                textField(educationController, 'Education (Degree, College, Year)', maxLines: 2),
+                textField(experienceController, 'Experience (Role, Company, Duration)', maxLines: 2),
+                textField(skillsController, 'Skills (comma separated)'),
+                textField(projectsController, 'Projects (Title + Description)', maxLines: 3),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: isLoading ? null : submitResume,
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Submit Resume'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({required IconData icon, required String hint, required TextEditingController controller}) {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        obscureText: false,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.white),
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.white60),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.1),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
         ),
       ),
     );
