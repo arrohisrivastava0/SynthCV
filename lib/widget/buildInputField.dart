@@ -4,13 +4,16 @@ Widget buildInputField({
   IconData? icon,
   required String hint,
   required TextEditingController controller,
+  int? maxLines =1,
   bool obscureText = false,
   IconData? suffixIcon,
   VoidCallback? onSuffixTap,
+
 }) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 16.0),
     child: TextField(
+      maxLines: maxLines,
       controller: controller,
       obscureText: obscureText,
       style: const TextStyle(color: Colors.white),

@@ -10,22 +10,32 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
   String? _highestEducation;
 
   final pgDegreeController = TextEditingController();
+  final pgUniController = TextEditingController();
   final pgYearController = TextEditingController();
   final pgCgpaController = TextEditingController();
+  final pgCityController = TextEditingController();
+  final pgStateController = TextEditingController();
 
   final ugDegreeController = TextEditingController();
+  final ugUniController = TextEditingController();
   final ugYearController = TextEditingController();
   final ugCgpaController = TextEditingController();
+  final ugCityController = TextEditingController();
+  final ugStateController = TextEditingController();
 
   final class12BoardController = TextEditingController();
   final class12SchoolController = TextEditingController();
   final class12YearController = TextEditingController();
   final class12PercentageController = TextEditingController();
+  final class12CityController = TextEditingController();
+  final class12StateController = TextEditingController();
 
   final class10BoardController = TextEditingController();
   final class10SchoolController = TextEditingController();
   final class10YearController = TextEditingController();
   final class10PercentageController = TextEditingController();
+  final class10CityController = TextEditingController();
+  final class10StateController = TextEditingController();
 
   Widget _buildInputField({required String hint, required TextEditingController controller, IconData? icon}) {
     return Padding(
@@ -127,8 +137,11 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
       fields.add(
         _buildSection("Post-Graduation", [
           buildInputField(hint: "Degree", controller: pgDegreeController),
+          buildInputField(hint: "University", controller: pgUniController),
           buildInputField(hint: "Expected Graduation Year", controller: pgYearController),
           buildInputField(hint: "CGPA", controller: pgCgpaController),
+          buildInputField(hint: "City", controller: pgUniController),
+          buildInputField(hint: "State", controller: pgUniController),
         ]),
       );
     }
@@ -137,6 +150,7 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
       fields.add(
         _buildSection("Graduation", [
           buildInputField(hint: "Degree", controller: ugDegreeController),
+          buildInputField(hint: "University", controller: ugUniController),
           buildInputField(hint: "Graduation Year", controller: ugYearController),
           buildInputField(hint: "CGPA", controller: ugCgpaController),
         ]),
@@ -152,6 +166,8 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
           buildInputField(hint: "School Name", controller: class12SchoolController),
           buildInputField(hint: "Passing Year", controller: class12YearController),
           buildInputField(hint: "Percentage", controller: class12PercentageController),
+          buildInputField(hint: "City", controller: class12CityController),
+          buildInputField(hint: "State", controller: class12StateController),
         ]),
       );
     }
@@ -162,6 +178,8 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
         buildInputField(hint: "School Name", controller: class10SchoolController),
         buildInputField(hint: "Passing Year", controller: class10YearController),
         buildInputField(hint: "Percentage", controller: class10PercentageController),
+        buildInputField(hint: "City", controller: class10CityController),
+        buildInputField(hint: "State", controller: class10StateController),
       ]),
     );
 
