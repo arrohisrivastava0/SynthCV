@@ -80,7 +80,7 @@ class _ExperienceSectionState extends State<ExperienceSection> {
             child: TextButton.icon(
               onPressed: () => _addExperience(workExperienceControllers),
               icon: const Icon(Icons.add, color: Colors.cyanAccent),
-              label: const Text("Add Work Experience +", style: TextStyle(color: Colors.cyanAccent)),
+              label: const Text("Add Work Experience", style: TextStyle(color: Colors.cyanAccent)),
             ),
           ),
         ]),
@@ -91,7 +91,7 @@ class _ExperienceSectionState extends State<ExperienceSection> {
             child: TextButton.icon(
               onPressed: () => _addExperience(leadershipControllers),
               icon: const Icon(Icons.add, color: Colors.purpleAccent),
-              label: const Text("Add Leadership Experience +", style: TextStyle(color: Colors.purpleAccent)),
+              label: const Text("Add Leadership Experience", style: TextStyle(color: Colors.purpleAccent)),
             ),
           ),
         ]),
