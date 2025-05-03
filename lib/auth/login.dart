@@ -107,7 +107,7 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
           _passwordController.text.trim(),
           true,
         );
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UploadResumeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       } else {
         _showErrorSnackBar('Google login failed');
       }
