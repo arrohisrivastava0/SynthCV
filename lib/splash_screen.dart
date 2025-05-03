@@ -20,14 +20,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void checkLoginStatus(BuildContext context) {
     var box = Hive.box('loginBox');
     bool rememberMe = box.get('rememberMe', defaultValue: false);
-    if (rememberMe) {
-      String username = box.get('username');
-      String password = box.get('password');
-      // Validate credentials or navigate to home
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      Navigator.pushReplacementNamed(context, '/login');
-    }
+    // if (rememberMe) {
+    //   String username = box.get('username');
+    //   String password = box.get('password');
+    //   // Validate credentials or navigate to home
+    //   Navigator.pushReplacementNamed(context, '/home');
+    // } else {
+    //   Navigator.pushReplacementNamed(context, '/login');
+    // }
   }
 
 
@@ -98,41 +98,42 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
 
-      final box = Hive.box('loginBox');
-      final rememberMe = box.get('rememberMe', defaultValue: false);
-      final loginType = box.get('loginType', defaultValue: 'email');
-
-      if (rememberMe) {
-      try {
-        if (loginType == 'email') {
-          final email = box.get('username');
-          final password = box.get('password');
-
-          final response = await Supabase.instance.client.auth.signInWithPassword(
-            email: email,
-            password: password,
-          );
-
-          if (response.user != null) {
-            if (!mounted) return;
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  HomeScreen()));
-            return;
-          }
-        } else if (loginType == 'google') {
-          // Just check if Supabase still has a valid session
-          final user = Supabase.instance.client.auth.currentUser;
-          if (user != null) {
-            if (!mounted) return;
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  HomeScreen()));
-            return;
-          }
-        }
-      } catch (_) {
-        // Silent fallback to login
-      }
-
-        if (!mounted) return;
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Login()));}
+    //   final box = Hive.box('loginBox');
+    //   final rememberMe = box.get('rememberMe', defaultValue: false);
+    //   final loginType = box.get('loginType', defaultValue: 'email');
+    //
+    //   if (rememberMe) {
+    //   try {
+    //     if (loginType == 'email') {
+    //       final email = box.get('username');
+    //       final password = box.get('password');
+    //
+    //       final response = await Supabase.instance.client.auth.signInWithPassword(
+    //         email: email,
+    //         password: password,
+    //       );
+    //
+    //       if (response.user != null) {
+    //         if (!mounted) return;
+    //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  HomeScreen()));
+    //         return;
+    //       }
+    //     } else if (loginType == 'google') {
+    //       // Just check if Supabase still has a valid session
+    //       final user = Supabase.instance.client.auth.currentUser;
+    //       if (user != null) {
+    //         if (!mounted) return;
+    //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  HomeScreen()));
+    //         return;
+    //       }
+    //     }
+    //   } catch (_) {
+    //     // Silent fallback to login
+    //   }
+    //
+    //     if (!mounted) return;
+    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Login()));}
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Login()));
     });
   }
 

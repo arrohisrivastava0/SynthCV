@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 import 'package:synthcv/widget/dynamic_education_section.dart';
 import 'package:synthcv/widget/dynamic_experience_section.dart';
+import 'package:synthcv/widget/neon_button.dart';
 import 'package:synthcv/widget/projects_section.dart';
 import 'package:synthcv/widget/skills_section.dart';
 import 'package:synthcv/widget/certifications_section.dart';
@@ -16,6 +17,7 @@ class ManualResumeForm extends StatefulWidget {
 
 class _ManualResumeFormState extends State<ManualResumeForm> {
   final _formKey = GlobalKey<FormState>();
+
 
   // Controllers
   final nameController = TextEditingController();
@@ -97,12 +99,19 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                 _section("Projects", [ProjectsSection()]),
                 _section("Certifications", [CertificationsSection()]),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: isLoading ? null : submitResume,
-                  child: isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text('Submit Resume'),
+                // ElevatedButton(
+                //   onPressed: isLoading ? null : submitResume,
+                //   child: isLoading
+                //       ? const CircularProgressIndicator()
+                //       : const Text('Submit Resume'),
+                // ),
+                NeonButton(
+                  text: "Submit Resume",
+                  isLoading: isLoading,
+                  onPressed: submitResume,
                 ),
+
+
               ],
             ),
           ),

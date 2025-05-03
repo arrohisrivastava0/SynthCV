@@ -96,6 +96,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/resume/resume_service.dart';
 import 'package:synthcv/screens/home_screen.dart';
+import 'package:synthcv/widget/simple_neon_button.dart';
 
 class UploadResumeScreen extends StatefulWidget {
   const UploadResumeScreen({super.key});
@@ -230,30 +231,50 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.upload_file, color: Colors.white),
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.cyanAccent,
-                      elevation: 10,
-                      side: const BorderSide(color: Colors.cyanAccent),
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    onPressed: () => _pickPdf(),
-                    label: Text(
-                      _selectedFile != null
-                          ? "Selected: ${_selectedFile!.path.split('/').last}"
-                          : "Choose PDF",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  NeonIconButton(
+                    icon: Icons.upload_file,
+                    label: _selectedFile != null
+                        ? "Selected: ${_selectedFile!.path.split('/').last}"
+                        : "Choose PDF",
+                    onPressed: _pickPdf,
+                    isDisabled: false,
+                    borderColor: Colors.cyanAccent,
+                    glowColor: Colors.cyanAccent,
                   ),
+                  const SizedBox(height: 20),
+                  NeonIconButton(
+                    icon: Icons.edit,
+                    label: "Upload Selected Resume",
+                    isLoading: _isUploading,
+                    isDisabled: _isUploading || _selectedFile == null,
+                    onPressed: _uploadPdf,
+                    borderColor: Colors.purpleAccent,
+                    glowColor: Colors.purpleAccent,
+                  ),
+                  // ElevatedButton.icon(
+                  //   icon: const Icon(Icons.upload_file, color: Colors.white),
+                  //
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.transparent,
+                  //     shadowColor: Colors.cyanAccent,
+                  //     elevation: 10,
+                  //     side: const BorderSide(color: Colors.cyanAccent),
+                  //     minimumSize: const Size(double.infinity, 50),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  //   onPressed: () => _pickPdf(),
+                  //   label: Text(
+                  //     _selectedFile != null
+                  //         ? "Selected: ${_selectedFile!.path.split('/').last}"
+                  //         : "Choose PDF",
+                  //     style: const TextStyle(
+                  //       color: Colors.white,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                   // if (_selectedFile != null)
                   //   Text("Selected: ${_selectedFile!.path.split('/').last}"),
                   const SizedBox(height: 20),
@@ -263,29 +284,29 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
                   //       ? const CircularProgressIndicator()
                   //       : const Text("Upload to Supabase"),
                   // ),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    label: _isUploading
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                            "Upload Selected Resume",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.purpleAccent,
-                      elevation: 10,
-                      side: const BorderSide(color: Colors.purpleAccent),
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    onPressed: (_isUploading || _selectedFile == null) ? null : _uploadPdf,
-                  ),
+                  // ElevatedButton.icon(
+                  //   icon: const Icon(Icons.edit, color: Colors.white),
+                  //   label: _isUploading
+                  //       ? const CircularProgressIndicator()
+                  //       : const Text(
+                  //           "Upload Selected Resume",
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.transparent,
+                  //     shadowColor: Colors.purpleAccent,
+                  //     elevation: 10,
+                  //     side: const BorderSide(color: Colors.purpleAccent),
+                  //     minimumSize: const Size(double.infinity, 50),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  //   onPressed: (_isUploading || _selectedFile == null) ? null : _uploadPdf,
+                  // ),
                   if (_uploadedUrl != null) ...[
                     const SizedBox(height: 20),
                     Text("Resume URL:"),
