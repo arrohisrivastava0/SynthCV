@@ -20,7 +20,9 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
   final _formKey = GlobalKey<FormState>();
   final educationKey = GlobalKey<DynamicEducationSectionState>();
   final skillsKey = GlobalKey<SkillsSectionState>();
-
+  final experienceKey = GlobalKey<ExperienceSectionState>();
+  final projectKey = GlobalKey<ProjectsSectionState>();
+  final certificationKey = GlobalKey<CertificationsSectionState>();
 
   // Controllers
   final nameController = TextEditingController();
@@ -39,6 +41,10 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
     setState(() => isLoading = true);
     final educationData = educationKey.currentState?.getEducation() ?? [];
     final skillsData = skillsKey.currentState?.getSkills() ?? [];
+    final experienceData = experienceKey.currentState?.getExperiences() ?? [];
+    final projectData = projectKey.currentState?.getProjects() ?? [];
+    // final certificationData = certificationKey.currentState?.getProjects() ?? [];
+
 
     final resumeData = {
       'name': nameController.text.trim(),
@@ -99,14 +105,10 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                   buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
                 ]),
                 NeonSection(title: 'Education', children: [DynamicEducationSection(key: educationKey)]),
-                NeonSection(title: 'Experience', children: [ExperienceSection()]),
+                NeonSection(title: 'Experience', children: [ExperienceSection(key: experienceKey,)]),
                 NeonSection(title: 'Skills', children: [SkillsSection(key: skillsKey)]),
-                NeonSection(title: 'Projects', children: [ProjectsSection()]),
-                NeonSection(title: 'Certifications', children: [CertificationsSection()]),
-                // _section("Experience", [ExperienceSection()]),
-                // _section("Skills", [SkillsSection()]),
-                // _section("Projects", [ProjectsSection()]),
-                // _section("Certifications", [CertificationsSection()]),
+                NeonSection(title: 'Projects', children: [ProjectsSection(key: projectKey,)]),
+                NeonSection(title: 'Certifications', children: [CertificationsSection(key: certificationKey,)]),
                 const SizedBox(height: 20),
                 // ElevatedButton(
                 //   onPressed: isLoading ? null : submitResume,

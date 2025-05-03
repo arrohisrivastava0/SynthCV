@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 
 class ProjectsSection extends StatefulWidget {
+  const ProjectsSection({Key? key}) : super(key: key);
   @override
-  _ProjectsSectionState createState() => _ProjectsSectionState();
+  ProjectsSectionState createState() => ProjectsSectionState();
 }
 
-class _ProjectsSectionState extends State<ProjectsSection> {
+class ProjectsSectionState extends State<ProjectsSection> {
   List<Map<String, dynamic>> _projects = [];
 
   void _promptAndAddProject() {
@@ -88,6 +89,18 @@ class _ProjectsSectionState extends State<ProjectsSection> {
       ),
     );
   }
+
+  List<Map<String, String>> getProjects() {
+    return _projects.map((project) {
+      return {
+        "name": project["name"]?.toString() ?? '',
+        "keywords": (project["keywords"] as TextEditingController).text.trim(),
+        "monthYear": (project["monthYear"] as TextEditingController).text.trim(),
+        "description": (project["description"] as TextEditingController).text.trim(),
+      };
+    }).where((p) => p.values.any((value) => value.isNotEmpty)).toList();
+  }
+
 
   @override
   Widget build(BuildContext context) {

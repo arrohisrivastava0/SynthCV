@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 
 class ExperienceSection extends StatefulWidget {
+  const ExperienceSection({Key? key}) : super(key: key);
   @override
-  _ExperienceSectionState createState() => _ExperienceSectionState();
+  ExperienceSectionState createState() => ExperienceSectionState();
 }
 
-class _ExperienceSectionState extends State<ExperienceSection> {
+class ExperienceSectionState extends State<ExperienceSection> {
   List<Map<String, TextEditingController>> workExperienceControllers = [];
   List<Map<String, TextEditingController>> leadershipControllers = [];
 
@@ -67,6 +68,25 @@ class _ExperienceSectionState extends State<ExperienceSection> {
         ],
       ),
     );
+  }
+
+  Map<String, List<Map<String, String>>> getExperiences() {
+    List<Map<String, String>> extractData(List<Map<String, TextEditingController>> controllers) {
+      return controllers.map((entry) {
+        return {
+          'role': entry['role']!.text.trim(),
+          'company': entry['company']!.text.trim(),
+          'start': entry['start']!.text.trim(),
+          'end': entry['end']!.text.trim(),
+          'description': entry['description']!.text.trim(),
+        };
+      }).where((entry) => entry.values.any((v) => v.isNotEmpty)).toList();
+    }
+
+    return {
+      'work': extractData(workExperienceControllers),
+      'leadership': extractData(leadershipControllers),
+    };
   }
 
   @override
