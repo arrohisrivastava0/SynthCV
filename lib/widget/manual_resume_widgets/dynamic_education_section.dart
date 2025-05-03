@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 
 class DynamicEducationSection extends StatefulWidget {
+  const DynamicEducationSection({Key? key}) : super(key: key);
   @override
-  _DynamicEducationSectionState createState() => _DynamicEducationSectionState();
+  DynamicEducationSectionState createState() => DynamicEducationSectionState();
 }
 
-class _DynamicEducationSectionState extends State<DynamicEducationSection> {
+class DynamicEducationSectionState extends State<DynamicEducationSection> {
   String? _highestEducation;
 
   final pgDegreeController = TextEditingController();
@@ -68,54 +69,6 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
     );
   }
 
-  // List<Widget> _educationFields() {
-  //   List<Widget> fields = [];
-  //
-  //   if (_highestEducation == "Post-Graduation") {
-  //     fields.addAll([
-  //       _buildSection("Post-Graduation", [
-  //         _buildInputField(hint: "Degree", controller: pgDegreeController),
-  //         _buildInputField(hint: "Expected Graduation Year", controller: pgYearController),
-  //         _buildInputField(hint: "CGPA", controller: pgCgpaController),
-  //       ])
-  //     ]);
-  //   }
-  //
-  //   if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation") {
-  //     fields.addAll([
-  //       _buildSection("Graduation", [
-  //         _buildInputField(hint: "Degree", controller: ugDegreeController),
-  //         _buildInputField(hint: "Graduation Year", controller: ugYearController),
-  //         _buildInputField(hint: "CGPA", controller: ugCgpaController),
-  //       ])
-  //     ]);
-  //   }
-  //
-  //   if (_highestEducation == "Post-Graduation" ||
-  //       _highestEducation == "Graduation" ||
-  //       _highestEducation == "Senior Secondary") {
-  //     fields.addAll([
-  //       _buildSection("Senior Secondary (Class 12)", [
-  //         _buildInputField(hint: "Board", controller: class12BoardController),
-  //         _buildInputField(hint: "School Name", controller: class12SchoolController),
-  //         _buildInputField(hint: "Passing Year", controller: class12YearController),
-  //         _buildInputField(hint: "Percentage", controller: class12PercentageController),
-  //       ])
-  //     ]);
-  //   }
-  //
-  //   fields.addAll([
-  //     _buildSection("Higher Secondary (Class 10)", [
-  //       _buildInputField(hint: "Board", controller: class10BoardController),
-  //       _buildInputField(hint: "School Name", controller: class10SchoolController),
-  //       _buildInputField(hint: "Passing Year", controller: class10YearController),
-  //       _buildInputField(hint: "Percentage", controller: class10PercentageController),
-  //     ])
-  //   ]);
-  //
-  //   return fields;
-  // }
-
   List<Widget> _educationFields() {
     List<Widget> fields = [];
 
@@ -171,6 +124,57 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
 
     return fields;
   }
+
+  List<Map<String, String>> getEducation() {
+    List<Map<String, String>> education = [];
+
+    if (_highestEducation == "Post-Graduation") {
+      education.add({
+        'level': 'Post-Graduation',
+        'degree': pgDegreeController.text.trim(),
+        'university': pgUniController.text.trim(),
+        'graduation_year': pgYearController.text.trim(),
+        'cgpa': pgCgpaController.text.trim(),
+        'city': pgCityController.text.trim(),
+        'state': pgStateController.text.trim(),
+      });
+    }
+
+    if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation") {
+      education.add({
+        'level': 'Graduation',
+        'degree': ugDegreeController.text.trim(),
+        'university': ugUniController.text.trim(),
+        'graduation_year': ugYearController.text.trim(),
+        'cgpa': ugCgpaController.text.trim(),
+      });
+    }
+
+    if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation" || _highestEducation == "Senior Secondary") {
+      education.add({
+        'level': 'Senior Secondary',
+        'board': class12BoardController.text.trim(),
+        'school': class12SchoolController.text.trim(),
+        'passing_year': class12YearController.text.trim(),
+        'percentage': class12PercentageController.text.trim(),
+        'city': class12CityController.text.trim(),
+        'state': class12StateController.text.trim(),
+      });
+    }
+
+    education.add({
+      'level': 'Higher Secondary',
+      'board': class10BoardController.text.trim(),
+      'school': class10SchoolController.text.trim(),
+      'passing_year': class10YearController.text.trim(),
+      'percentage': class10PercentageController.text.trim(),
+      'city': class10CityController.text.trim(),
+      'state': class10StateController.text.trim(),
+    });
+
+    return education;
+  }
+
 
 
   @override

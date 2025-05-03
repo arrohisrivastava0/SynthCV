@@ -18,6 +18,9 @@ class ManualResumeForm extends StatefulWidget {
 
 class _ManualResumeFormState extends State<ManualResumeForm> {
   final _formKey = GlobalKey<FormState>();
+  final educationKey = GlobalKey<DynamicEducationSectionState>();
+  final skillsKey = GlobalKey<SkillsSectionState>();
+
 
   // Controllers
   final nameController = TextEditingController();
@@ -34,6 +37,8 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
+    final educationData = educationKey.currentState?.getEducation() ?? [];
+    final skillsData = skillsKey.currentState?.getSkills() ?? [];
 
     final resumeData = {
       'name': nameController.text.trim(),
@@ -93,9 +98,9 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                   buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
                   buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
                 ]),
-                NeonSection(title: 'Education', children: [DynamicEducationSection()]),
+                NeonSection(title: 'Education', children: [DynamicEducationSection(key: educationKey)]),
                 NeonSection(title: 'Experience', children: [ExperienceSection()]),
-                NeonSection(title: 'Skills', children: [SkillsSection()]),
+                NeonSection(title: 'Skills', children: [SkillsSection(key: skillsKey)]),
                 NeonSection(title: 'Projects', children: [ProjectsSection()]),
                 NeonSection(title: 'Certifications', children: [CertificationsSection()]),
                 // _section("Experience", [ExperienceSection()]),

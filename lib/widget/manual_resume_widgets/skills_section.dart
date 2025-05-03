@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 
 class SkillsSection extends StatefulWidget {
+  const SkillsSection({Key? key}) : super(key: key); // Add key here
   @override
-  _SkillsSectionState createState() => _SkillsSectionState();
+  SkillsSectionState createState() => SkillsSectionState();
 }
 
-class _SkillsSectionState extends State<SkillsSection> {
+class SkillsSectionState extends State<SkillsSection> {
   final Map<String, List<TextEditingController>> _skillSections = {
     "Hard Skills": [TextEditingController(), TextEditingController()],
     "Soft Skills": [TextEditingController(), TextEditingController()],
@@ -89,6 +90,20 @@ class _SkillsSectionState extends State<SkillsSection> {
         ],
       ),
     );
+  }
+
+  Map<String, List<String>> getSkills() {
+    final Map<String, List<String>> skills = {};
+    _skillSections.forEach((section, controllers) {
+      final values = controllers
+          .map((controller) => controller.text.trim())
+          .where((text) => text.isNotEmpty)
+          .toList();
+      if (values.isNotEmpty) {
+        skills[section] = values;
+      }
+    });
+    return skills;
   }
 
   @override
