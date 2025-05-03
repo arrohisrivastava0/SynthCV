@@ -19,6 +19,49 @@ class _CertificationsSectionState extends State<CertificationsSection> {
     });
   }
 
+  // Widget neonSection(String title, List<Widget> children) {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(vertical: 16),
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white.withOpacity(0.03),
+  //       borderRadius: BorderRadius.circular(16),
+  //       border: Border.all(color: Colors.white.withOpacity(0.15)),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.cyanAccent.withOpacity(0.08),
+  //           blurRadius: 16,
+  //           offset: const Offset(0, 6),
+  //         ),
+  //         BoxShadow(
+  //           color: Colors.deepPurpleAccent.withOpacity(0.08),
+  //           blurRadius: 30,
+  //           offset: const Offset(0, 12),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: 18,
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.white,
+  //             shadows: [
+  //               Shadow(color: Colors.cyanAccent, blurRadius: 4),
+  //             ],
+  //           ),
+  //         ),
+  //         const SizedBox(height: 16),
+  //         ...children,
+  //       ],
+  //     ),
+  //   );
+  // }
+
+
   Widget _section(String title, List<Widget> children) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),

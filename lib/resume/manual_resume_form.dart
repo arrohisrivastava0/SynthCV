@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/widget/buildInputField.dart';
-import 'package:synthcv/widget/dynamic_education_section.dart';
-import 'package:synthcv/widget/dynamic_experience_section.dart';
+import 'package:synthcv/widget/manual_resume_widgets/certifications_section.dart';
+import 'package:synthcv/widget/manual_resume_widgets/dynamic_education_section.dart';
+import 'package:synthcv/widget/manual_resume_widgets/dynamic_experience_section.dart';
+import 'package:synthcv/widget/manual_resume_widgets/projects_section.dart';
+import 'package:synthcv/widget/manual_resume_widgets/skills_section.dart';
 import 'package:synthcv/widget/neon_button.dart';
-import 'package:synthcv/widget/projects_section.dart';
-import 'package:synthcv/widget/skills_section.dart';
-import 'package:synthcv/widget/certifications_section.dart';
+import 'package:synthcv/widget/neon_section.dart';
 
 class ManualResumeForm extends StatefulWidget {
   const ManualResumeForm({super.key});
@@ -17,7 +18,6 @@ class ManualResumeForm extends StatefulWidget {
 
 class _ManualResumeFormState extends State<ManualResumeForm> {
   final _formKey = GlobalKey<FormState>();
-
 
   // Controllers
   final nameController = TextEditingController();
@@ -88,16 +88,20 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
             key: _formKey,
             child: ListView(
               children: [
-                _section("Basic Information", [
+                NeonSection(title: "Basic Information", children: [
                   buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
                   buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
                   buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
                 ]),
-                _section("Education", [DynamicEducationSection()]),
-                _section("Experience", [ExperienceSection()]),
-                _section("Skills", [SkillsSection()]),
-                _section("Projects", [ProjectsSection()]),
-                _section("Certifications", [CertificationsSection()]),
+                NeonSection(title: 'Education', children: [DynamicEducationSection()]),
+                NeonSection(title: 'Experience', children: [ExperienceSection()]),
+                NeonSection(title: 'Skills', children: [SkillsSection()]),
+                NeonSection(title: 'Projects', children: [ProjectsSection()]),
+                NeonSection(title: 'Certifications', children: [CertificationsSection()]),
+                // _section("Experience", [ExperienceSection()]),
+                // _section("Skills", [SkillsSection()]),
+                // _section("Projects", [ProjectsSection()]),
+                // _section("Certifications", [CertificationsSection()]),
                 const SizedBox(height: 20),
                 // ElevatedButton(
                 //   onPressed: isLoading ? null : submitResume,
@@ -116,41 +120,6 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _section(String title, List<Widget> children) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.15)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.cyanAccent.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [Shadow(color: Colors.cyanAccent, blurRadius: 4)],
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
       ),
     );
   }

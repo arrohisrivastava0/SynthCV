@@ -37,27 +37,6 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
   final class10CityController = TextEditingController();
   final class10StateController = TextEditingController();
 
-  Widget _buildInputField({required String hint, required TextEditingController controller, IconData? icon}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: TextField(
-        controller: controller,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.07),
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.white54),
-          prefixIcon: icon != null ? Icon(icon, color: Colors.white54) : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.white24),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSection(String title, List<Widget> children) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -65,7 +44,14 @@ class _DynamicEducationSectionState extends State<DynamicEducationSection> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white24),
+        border: Border.all(color: Colors.white.withOpacity(0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.cyanAccent.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
