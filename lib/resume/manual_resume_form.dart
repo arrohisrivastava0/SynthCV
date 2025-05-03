@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 import 'package:synthcv/widget/dynamic_education_section.dart';
+import 'package:synthcv/widget/dynamic_experience_section.dart';
 
 class ManualResumeForm extends StatefulWidget {
   const ManualResumeForm({super.key});
@@ -96,6 +97,7 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                 _section("Experience", [
                   textField(experienceController, 'Experience (Role, Company, Duration)', maxLines: 2),
                 ]),
+                _section("Experience", [ExperienceSection()]),
                 _section("Skills", [
                   textField(skillsController, 'Skills (comma separated)'),
                 ]),
