@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synthcv/widget/buildInputField.dart';
+import 'package:synthcv/widget/dynamic_education_section.dart';
 
 class ManualResumeForm extends StatefulWidget {
   const ManualResumeForm({super.key});
@@ -80,6 +82,26 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
             key: _formKey,
             child: ListView(
               children: [
+                _section("Basic Information", [
+                  buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                  // _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                  buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
+                  buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
+                ]),
+                _section("Education", [DynamicEducationSection()]),
+                _section("Education", [
+                  _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                  textField(educationController, 'Education (Degree, College, Year)', maxLines: 2),
+                ]),
+                _section("Experience", [
+                  textField(experienceController, 'Experience (Role, Company, Duration)', maxLines: 2),
+                ]),
+                _section("Skills", [
+                  textField(skillsController, 'Skills (comma separated)'),
+                ]),
+                _section("Projects", [
+                  textField(projectsController, 'Projects (Title + Description)', maxLines: 3),
+                ]),
                 _buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
                 _buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
                 _buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
@@ -127,6 +149,99 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
       ),
     );
   }
+
+  Widget _section(String title, List<Widget> children) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.cyanAccent.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [Shadow(color: Colors.cyanAccent, blurRadius: 4)],
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+
+
+  String highestEducation = 'Graduation';
+
+  // Widget _educationSection() {
+  //   return _section("Education", [
+  //     DropdownButtonFormField<String>(
+  //       decoration: _inputDecoration("Highest Level of Education"),
+  //       value: highestEducation,
+  //       items: ['Post-Graduation', 'Graduation', 'Senior Secondary', 'Higher Secondary']
+  //           .map((level) => DropdownMenuItem(value: level, child: Text(level)))
+  //           .toList(),
+  //       onChanged: (value) {
+  //         setState(() {
+  //           highestEducation = value!;
+  //         });
+  //       },
+  //     ),
+  //     if (['Post-Graduation', 'Graduation'].contains(highestEducation))
+  //       _buildInputField(hint: 'Post-Graduation Degree (e.g., M.Tech)', controller: pgDegreeController),
+  //     if (['Post-Graduation', 'Graduation'].contains(highestEducation))
+  //       _buildInputField(hint: 'Post-Graduation Year', controller: pgYearController),
+  //     if (['Post-Graduation', 'Graduation'].contains(highestEducation))
+  //       _buildInputField(hint: 'Post-Graduation CGPA', controller: pgCgpaController),
+  //
+  //     if (['Post-Graduation', 'Graduation'].contains(highestEducation))
+  //       const Divider(color: Colors.white38),
+  //
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Graduation Degree (e.g., B.Tech)', controller: gradDegreeController),
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Graduation Year', controller: gradYearController),
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Graduation CGPA', controller: gradCgpaController),
+  //
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary'].contains(highestEducation))
+  //       const Divider(color: Colors.white38),
+  //
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary', 'Higher Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Class 12th Board', controller: class12BoardController),
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary', 'Higher Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Class 12th School Name', controller: class12SchoolController),
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary', 'Higher Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Class 12th Passing Year', controller: class12YearController),
+  //     if (['Post-Graduation', 'Graduation', 'Senior Secondary', 'Higher Secondary'].contains(highestEducation))
+  //       _buildInputField(hint: 'Class 12th Percentage', controller: class12PercentageController),
+  //
+  //     const Divider(color: Colors.white38),
+  //
+  //     _buildInputField(hint: 'Class 10th Board', controller: class10BoardController),
+  //     _buildInputField(hint: 'Class 10th School Name', controller: class10SchoolController),
+  //     _buildInputField(hint: 'Class 10th Passing Year', controller: class10YearController),
+  //     _buildInputField(hint: 'Class 10th Percentage', controller: class10PercentageController),
+  //   ]);
+  // }
+
+
 
   Widget textField(TextEditingController controller, String label, {int maxLines = 1}) {
     return Padding(
