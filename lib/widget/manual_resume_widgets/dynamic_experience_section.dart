@@ -7,7 +7,9 @@ class ExperienceSection extends StatefulWidget {
   ExperienceSectionState createState() => ExperienceSectionState();
 }
 
-class ExperienceSectionState extends State<ExperienceSection> {
+class ExperienceSectionState extends State<ExperienceSection> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
   List<Map<String, TextEditingController>> workExperienceControllers = [];
   List<Map<String, TextEditingController>> leadershipControllers = [];
 
@@ -89,8 +91,10 @@ class ExperienceSectionState extends State<ExperienceSection> {
     };
   }
 
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         _section("Work Experience", [

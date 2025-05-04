@@ -8,7 +8,9 @@ import 'package:synthcv/widget/manual_resume_widgets/dynamic_experience_section.
 import 'package:synthcv/widget/manual_resume_widgets/projects_section.dart';
 import 'package:synthcv/widget/manual_resume_widgets/skills_section.dart';
 import 'package:synthcv/widget/neon_button.dart';
-import 'package:synthcv/widget/neon_section.dart';
+// import 'package:synthcv/widget/neon_section.dart';
+// import 'package:synthcv/widget/neon_section.dart';
+
 
 class ManualResumeForm extends StatefulWidget {
   const ManualResumeForm({super.key});
@@ -24,15 +26,16 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
   final experienceKey = GlobalKey<ExperienceSectionState>();
   final projectKey = GlobalKey<ProjectsSectionState>();
   final certificationKey = GlobalKey<CertificationsSectionState>();
+  final GlobalKey<SkillsSectionState> _skillsKey = GlobalKey<SkillsSectionState>();
+  final GlobalKey<DynamicEducationSectionState> _educationKey = GlobalKey<DynamicEducationSectionState>();
+  final GlobalKey<ExperienceSectionState> _experienceKey = GlobalKey<ExperienceSectionState>();
+  final GlobalKey<ProjectsSectionState> _projectKey = GlobalKey<ProjectsSectionState>();
+  final GlobalKey<CertificationsSectionState> _certificationKey = GlobalKey<CertificationsSectionState>();
 
   // Controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  // final educationController = TextEditingController();
-  // final experienceController = TextEditingController();
-  // final skillsController = TextEditingController();
-  // final projectsController = TextEditingController();
 
   bool isLoading = false;
 
@@ -44,7 +47,7 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
     final skillsData = skillsKey.currentState?.getSkills() ?? [];
     final experienceData = experienceKey.currentState?.getExperiences() ?? [];
     final projectData = projectKey.currentState?.getProjects() ?? [];
-    final certificationData = certificationKey.currentState?.getCertifications() ?? [];
+    final certification = _certificationKey.currentState?.getCertifications() ?? [];
 
     final resumeData = {
       'name': nameController.text.trim(),
@@ -54,21 +57,9 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
       'experience': experienceData,
       'skills': skillsData,
       'projects': projectData,
-      'certifications': certificationData,
+      'certifications': certification,
       'submitted_at': DateTime.now().toIso8601String(),
     };
-
-
-    // final resumeData = {
-    //   'name': nameController.text.trim(),
-    //   'email': emailController.text.trim(),
-    //   'phone': phoneController.text.trim(),
-    //   'education': educationController.text.trim(),
-    //   'experience': experienceController.text.trim(),
-    //   'skills': skillsController.text.trim(),
-    //   'projects': projectsController.text.trim(),
-    //   'submitted_at': DateTime.now().toIso8601String(),
-    // };
 
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
@@ -87,27 +78,41 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
     }
 
     setState(() => isLoading = false);
+
   }
 
   void previewResume() {
-    final educationData = educationKey.currentState?.getEducation() ?? [];
-    final skillsData = skillsKey.currentState?.getSkills() ?? [];
-    final experienceData = experienceKey.currentState?.getExperiences() ?? [];
-    final projectData = projectKey.currentState?.getProjects() ?? [];
-    final certificationData = certificationKey.currentState?.getCertifications() ?? [];
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final phone = phoneController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Name, Email, and Phone are required."),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return; // Stop navigation if any are empty
+    }
+
+    final skills = _skillsKey.currentState?.getSkills() ?? {};
+    final education = _educationKey.currentState?.getEducation() ?? [];
+    final experience = _experienceKey.currentState?.getExperiences() ?? [];
+    final project = _projectKey.currentState?.getProjects() ?? [];
+    final certification = _certificationKey.currentState?.getCertifications() ?? [];
 
     final resumeData = {
-      'name': nameController.text.trim(),
-      'email': emailController.text.trim(),
-      'phone': phoneController.text.trim(),
-      'education': educationData,
-      'experience': experienceData,
-      'skills': skillsData,
-      'projects': projectData,
-      'certifications': certificationData,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'education': education,
+      'experience': experience,
+      'skills': skills,
+      'projects': project,
+      'certifications': certification,
       'submitted_at': DateTime.now().toIso8601String(),
     };
-
 
     Navigator.push(
       context,
@@ -116,6 +121,41 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
       ),
     );
   }
+
+
+  // void previewResume() {
+  //   final skills = _skillsKey.currentState?.getSkills() ?? {};
+  //   final education = _educationKey.currentState?.getEducation() ?? [];
+  //   final experience = _experienceKey.currentState?.getExperiences() ?? [];
+  //   final project = _projectKey.currentState?.getProjects() ?? [];
+  //   final certification = _certificationKey.currentState?.getCertifications() ?? [];
+  //
+  //   final resumeData = {
+  //     'name': nameController.text.trim(),
+  //     'email': emailController.text.trim(),
+  //     'phone': phoneController.text.trim(),
+  //     'education': education,
+  //     'experience': experience,
+  //     'skills': skills,
+  //     'projects': project,
+  //     'certifications': certification,
+  //     'submitted_at': DateTime.now().toIso8601String(),
+  //   };
+  //
+  //   print("Resume Data: $resumeData");
+  //   print("Experience: ${resumeData['experience']}");
+  //   print("Education: ${resumeData['education']}");
+  //   print("Skills: ${resumeData['skills']}");
+  //
+  //
+  //
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => ResumePreviewPage(resumeData: resumeData),
+  //     ),
+  //   );
+  // }
 
 
   @override
@@ -146,25 +186,17 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                   buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
                   buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
                 ]),
-                NeonSection(title: 'Education', children: [DynamicEducationSection(key: educationKey)]),
-                NeonSection(title: 'Experience', children: [ExperienceSection(key: experienceKey,)]),
-                const NeonSection(title: 'Skills', children: [SkillsSection(key: PageStorageKey('skillsSection'))]),
-                NeonSection(title: 'Projects', children: [ProjectsSection(key: projectKey,)]),
-                NeonSection(title: 'Certifications', children: [CertificationsSection(key: certificationKey,)]),
+                NeonSection(title: 'Education', children: [DynamicEducationSection(key: _educationKey)]),
+                NeonSection(title: 'Experience', children: [ExperienceSection(key: _experienceKey)]),
+                NeonSection(title: 'Skills', children: [SkillsSection(key: _skillsKey)]),
+                NeonSection(title: 'Projects', children: [ProjectsSection(key: _projectKey)]),
+                NeonSection(title: 'Certifications', children: [CertificationsSection(key: _certificationKey)]),
                 const SizedBox(height: 20),
-                // ElevatedButton(
-                //   onPressed: isLoading ? null : submitResume,
-                //   child: isLoading
-                //       ? const CircularProgressIndicator()
-                //       : const Text('Submit Resume'),
-                // ),
                 NeonButton(
-                  text: "Submit Resume",
+                  text: "Preview Resume",
                   isLoading: isLoading,
                   onPressed: previewResume,
                 ),
-
-
               ],
             ),
           ),

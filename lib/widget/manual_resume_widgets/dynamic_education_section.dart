@@ -131,6 +131,8 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
     return fields;
   }
 
+  // Map<String, List<Map<String, String>>>
+
   List<Map<String, String>> getEducation() {
     List<Map<String, String>> education = [];
 
@@ -182,47 +184,6 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
 
     return education;
   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     super.build(context);
-//     return Column(
-//       children: [
-//         _buildSection("Education Level", [
-//           DropdownButtonFormField<String>(
-//             value: _highestEducation,
-//             dropdownColor: const Color(0xFF1A1A1A),
-//             style: const TextStyle(color: Colors.white),
-//             decoration: InputDecoration(
-//               filled: true,
-//               fillColor: Colors.white.withOpacity(0.07),
-//               hintText: "Select Highest Education",
-//               hintStyle: const TextStyle(color: Colors.white54),
-//               border: OutlineInputBorder(
-//                 borderRadius: BorderRadius.circular(10),
-//               ),
-//             ),
-//             items: const [
-//               DropdownMenuItem(value: "Post-Graduation", child: Text("Post-Graduation")),
-//               DropdownMenuItem(value: "Graduation", child: Text("Graduation")),
-//               DropdownMenuItem(value: "Senior Secondary", child: Text("Senior Secondary (12th)")),
-//               DropdownMenuItem(value: "Higher Secondary", child: Text("Higher Secondary (10th)")),
-//             ],
-//             onChanged: (value) {
-//               setState(() {
-//                 _highestEducation = value;
-//               });
-//             },
-//           ),
-//         ]),
-//         ..._educationFields(),
-//       ],
-//     );
-//   }
-//
-//
-// }
-
 
 @override
 Widget build(BuildContext context) {

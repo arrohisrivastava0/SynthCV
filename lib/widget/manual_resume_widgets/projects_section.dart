@@ -7,7 +7,9 @@ class ProjectsSection extends StatefulWidget {
   ProjectsSectionState createState() => ProjectsSectionState();
 }
 
-class ProjectsSectionState extends State<ProjectsSection> {
+class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
   List<Map<String, dynamic>> _projects = [];
 
   void _promptAndAddProject() {
@@ -104,6 +106,7 @@ class ProjectsSectionState extends State<ProjectsSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         ..._projects.asMap().entries.map((entry) {

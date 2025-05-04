@@ -7,7 +7,9 @@ class CertificationsSection extends StatefulWidget {
   CertificationsSectionState createState() => CertificationsSectionState();
 }
 
-class CertificationsSectionState extends State<CertificationsSection> {
+class CertificationsSectionState extends State<CertificationsSection> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
   List<Map<String, TextEditingController>> _certifications = [];
 
   void _addCertification() {
@@ -68,6 +70,7 @@ class CertificationsSectionState extends State<CertificationsSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         ..._certifications.asMap().entries.map((entry) {
