@@ -7,7 +7,9 @@ class SkillsSection extends StatefulWidget {
   SkillsSectionState createState() => SkillsSectionState();
 }
 
-class SkillsSectionState extends State<SkillsSection> {
+class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
   final Map<String, List<TextEditingController>> _skillSections = {
     "Hard Skills": [TextEditingController(), TextEditingController()],
     "Soft Skills": [TextEditingController(), TextEditingController()],
@@ -108,6 +110,7 @@ class SkillsSectionState extends State<SkillsSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         ..._skillSections.entries.map((entry) {

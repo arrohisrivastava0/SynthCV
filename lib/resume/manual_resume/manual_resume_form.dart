@@ -148,7 +148,7 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                 ]),
                 NeonSection(title: 'Education', children: [DynamicEducationSection(key: educationKey)]),
                 NeonSection(title: 'Experience', children: [ExperienceSection(key: experienceKey,)]),
-                NeonSection(title: 'Skills', children: [SkillsSection(key: skillsKey)]),
+                const NeonSection(title: 'Skills', children: [SkillsSection(key: PageStorageKey('skillsSection'))]),
                 NeonSection(title: 'Projects', children: [ProjectsSection(key: projectKey,)]),
                 NeonSection(title: 'Certifications', children: [CertificationsSection(key: certificationKey,)]),
                 const SizedBox(height: 20),
