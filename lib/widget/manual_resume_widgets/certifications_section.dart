@@ -55,6 +55,17 @@ class CertificationsSectionState extends State<CertificationsSection> {
     );
   }
 
+  List<Map<String, String>> getCertifications() {
+    return _certifications.map((cert) {
+      return {
+        "name": cert["name"]?.text.trim() ?? '',
+        "monthYear": cert["monthYear"]?.text.trim() ?? '',
+        "link": cert["link"]?.text.trim() ?? '',
+      };
+    }).where((c) => c.values.any((value) => value.isNotEmpty)).toList();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -259,8 +259,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:synthcv/resume/manual_resume_form.dart';
-import 'package:synthcv/resume/upload_resume_screen.dart';
+import 'package:synthcv/resume/manual_resume/manual_resume_form.dart';
+import 'package:synthcv/resume/pdf_resume/upload_resume_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final user = Supabase.instance.client.auth.currentUser;

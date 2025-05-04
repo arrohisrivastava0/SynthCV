@@ -7,7 +7,10 @@ class DynamicEducationSection extends StatefulWidget {
   DynamicEducationSectionState createState() => DynamicEducationSectionState();
 }
 
-class DynamicEducationSectionState extends State<DynamicEducationSection> {
+class DynamicEducationSectionState extends State<DynamicEducationSection> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
+
   String? _highestEducation;
 
   final pgDegreeController = TextEditingController();
@@ -79,8 +82,9 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> {
           buildInputField(hint: "University", controller: pgUniController),
           buildInputField(hint: "Expected Graduation Year", controller: pgYearController),
           buildInputField(hint: "CGPA", controller: pgCgpaController),
-          buildInputField(hint: "City", controller: pgUniController),
-          buildInputField(hint: "State", controller: pgUniController),
+          buildInputField(hint: "City", controller: pgCityController),
+          buildInputField(hint: "State", controller: pgStateController),
+
         ]),
       );
     }
@@ -92,6 +96,8 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> {
           buildInputField(hint: "University", controller: ugUniController),
           buildInputField(hint: "Graduation Year", controller: ugYearController),
           buildInputField(hint: "CGPA", controller: ugCgpaController),
+          buildInputField(hint: "City", controller: ugCityController),
+          buildInputField(hint: "State", controller: ugStateController),
         ]),
       );
     }
@@ -147,6 +153,8 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> {
         'university': ugUniController.text.trim(),
         'graduation_year': ugYearController.text.trim(),
         'cgpa': ugCgpaController.text.trim(),
+        'city': ugCityController.text.trim(),
+        'state': ugStateController.text.trim(),
       });
     }
 
@@ -175,41 +183,82 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> {
     return education;
   }
 
+//   @override
+//   Widget build(BuildContext context) {
+//     super.build(context);
+//     return Column(
+//       children: [
+//         _buildSection("Education Level", [
+//           DropdownButtonFormField<String>(
+//             value: _highestEducation,
+//             dropdownColor: const Color(0xFF1A1A1A),
+//             style: const TextStyle(color: Colors.white),
+//             decoration: InputDecoration(
+//               filled: true,
+//               fillColor: Colors.white.withOpacity(0.07),
+//               hintText: "Select Highest Education",
+//               hintStyle: const TextStyle(color: Colors.white54),
+//               border: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(10),
+//               ),
+//             ),
+//             items: const [
+//               DropdownMenuItem(value: "Post-Graduation", child: Text("Post-Graduation")),
+//               DropdownMenuItem(value: "Graduation", child: Text("Graduation")),
+//               DropdownMenuItem(value: "Senior Secondary", child: Text("Senior Secondary (12th)")),
+//               DropdownMenuItem(value: "Higher Secondary", child: Text("Higher Secondary (10th)")),
+//             ],
+//             onChanged: (value) {
+//               setState(() {
+//                 _highestEducation = value;
+//               });
+//             },
+//           ),
+//         ]),
+//         ..._educationFields(),
+//       ],
+//     );
+//   }
+//
+//
+// }
 
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildSection("Education Level", [
-          DropdownButtonFormField<String>(
-            value: _highestEducation,
-            dropdownColor: const Color(0xFF1A1A1A),
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white.withOpacity(0.07),
-              hintText: "Select Highest Education",
-              hintStyle: const TextStyle(color: Colors.white54),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+@override
+Widget build(BuildContext context) {
+  super.build(context); // Important to call this when using KeepAlive mixin
+
+  return Column(
+    children: [
+      _buildSection("Education Level", [
+        DropdownButtonFormField<String>(
+          value: _highestEducation,
+          dropdownColor: const Color(0xFF1A1A1A),
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.07),
+            hintText: "Select Highest Education",
+            hintStyle: const TextStyle(color: Colors.white54),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-            items: const [
-              DropdownMenuItem(value: "Post-Graduation", child: Text("Post-Graduation")),
-              DropdownMenuItem(value: "Graduation", child: Text("Graduation")),
-              DropdownMenuItem(value: "Senior Secondary", child: Text("Senior Secondary (12th)")),
-              DropdownMenuItem(value: "Higher Secondary", child: Text("Higher Secondary (10th)")),
-            ],
-            onChanged: (value) {
-              setState(() {
-                _highestEducation = value;
-              });
-            },
           ),
-        ]),
-        ..._educationFields(),
-      ],
-    );
-  }
+          items: const [
+            DropdownMenuItem(value: "Post-Graduation", child: Text("Post-Graduation")),
+            DropdownMenuItem(value: "Graduation", child: Text("Graduation")),
+            DropdownMenuItem(value: "Senior Secondary", child: Text("Senior Secondary (12th)")),
+            DropdownMenuItem(value: "Higher Secondary", child: Text("Higher Secondary (10th)")),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _highestEducation = value;
+            });
+          },
+        ),
+      ]),
+      ..._educationFields(),
+    ],
+  );
+}
 }

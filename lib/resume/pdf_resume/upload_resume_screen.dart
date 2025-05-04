@@ -94,7 +94,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:synthcv/resume/resume_service.dart';
+import 'package:synthcv/resume/pdf_resume/resume_service.dart';
 import 'package:synthcv/screens/home_screen.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
 

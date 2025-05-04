@@ -15,7 +15,6 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/auth/login.dart';
-import 'package:synthcv/resume/upload_resume_screen.dart';
 import 'splash_screen.dart';
 
 void main() async {

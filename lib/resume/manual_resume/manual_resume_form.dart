@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synthcv/resume/manual_resume/resume_preview_page.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 import 'package:synthcv/widget/manual_resume_widgets/certifications_section.dart';
 import 'package:synthcv/widget/manual_resume_widgets/dynamic_education_section.dart';
@@ -28,10 +29,10 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  final educationController = TextEditingController();
-  final experienceController = TextEditingController();
-  final skillsController = TextEditingController();
-  final projectsController = TextEditingController();
+  // final educationController = TextEditingController();
+  // final experienceController = TextEditingController();
+  // final skillsController = TextEditingController();
+  // final projectsController = TextEditingController();
 
   bool isLoading = false;
 
@@ -43,19 +44,31 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
     final skillsData = skillsKey.currentState?.getSkills() ?? [];
     final experienceData = experienceKey.currentState?.getExperiences() ?? [];
     final projectData = projectKey.currentState?.getProjects() ?? [];
-    // final certificationData = certificationKey.currentState?.getProjects() ?? [];
-
+    final certificationData = certificationKey.currentState?.getCertifications() ?? [];
 
     final resumeData = {
       'name': nameController.text.trim(),
       'email': emailController.text.trim(),
       'phone': phoneController.text.trim(),
-      'education': educationController.text.trim(),
-      'experience': experienceController.text.trim(),
-      'skills': skillsController.text.trim(),
-      'projects': projectsController.text.trim(),
+      'education': educationData,
+      'experience': experienceData,
+      'skills': skillsData,
+      'projects': projectData,
+      'certifications': certificationData,
       'submitted_at': DateTime.now().toIso8601String(),
     };
+
+
+    // final resumeData = {
+    //   'name': nameController.text.trim(),
+    //   'email': emailController.text.trim(),
+    //   'phone': phoneController.text.trim(),
+    //   'education': educationController.text.trim(),
+    //   'experience': experienceController.text.trim(),
+    //   'skills': skillsController.text.trim(),
+    //   'projects': projectsController.text.trim(),
+    //   'submitted_at': DateTime.now().toIso8601String(),
+    // };
 
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
@@ -75,6 +88,35 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
 
     setState(() => isLoading = false);
   }
+
+  void previewResume() {
+    final educationData = educationKey.currentState?.getEducation() ?? [];
+    final skillsData = skillsKey.currentState?.getSkills() ?? [];
+    final experienceData = experienceKey.currentState?.getExperiences() ?? [];
+    final projectData = projectKey.currentState?.getProjects() ?? [];
+    final certificationData = certificationKey.currentState?.getCertifications() ?? [];
+
+    final resumeData = {
+      'name': nameController.text.trim(),
+      'email': emailController.text.trim(),
+      'phone': phoneController.text.trim(),
+      'education': educationData,
+      'experience': experienceData,
+      'skills': skillsData,
+      'projects': projectData,
+      'certifications': certificationData,
+      'submitted_at': DateTime.now().toIso8601String(),
+    };
+
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ResumePreviewPage(resumeData: resumeData),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +161,7 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
                 NeonButton(
                   text: "Submit Resume",
                   isLoading: isLoading,
-                  onPressed: submitResume,
+                  onPressed: previewResume,
                 ),
 
 
