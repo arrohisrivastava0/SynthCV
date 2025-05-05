@@ -107,11 +107,10 @@ class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveCli
     );
   }
 
-
   Widget _section(String title, List<TextEditingController> controllers) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
@@ -150,25 +149,64 @@ class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveCli
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          ...controllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final controller = entry.value;
-            return Row(
-              children: [
-                Expanded(
-                  child: buildInputField(
-                    hint: "Enter a skill",
-                    controller: controller,
+          const SizedBox(height: 5),
+          ReorderableListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (newIndex > oldIndex) newIndex -= 1;
+                final moved = controllers.removeAt(oldIndex);
+                controllers.insert(newIndex, moved);
+              });
+            },
+            children: [
+              for (int i = 0; i < controllers.length; i++)
+                Container(
+                  key: ValueKey('$title-$i'),
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(child: buildInputField(hint: "Enter a skill", controller: controllers[i])),
+                      ReorderableDragStartListener(
+                        index: i,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Icon(Icons.drag_handle, size: 20, color: Colors.white54),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 20, color: Colors.white54),
+                        onPressed: () => _removeSkill(title, i),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: () => _removeSkill(title, index),
-                ),
-              ],
-            );
-          }).toList(),
+                )
+
+              // ListTile(
+                //   key: ValueKey('$title-$i'),
+                //   title: buildInputField(
+                //     hint: "Enter a skill",
+                //     controller: controllers[i],
+                //   ),
+                //   trailing: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       ReorderableDragStartListener(
+                //         index: i,
+                //         child: const Icon(Icons.drag_handle, color: Colors.white54),
+                //       ),
+                //       IconButton(
+                //         icon: const Icon(Icons.close, color: Colors.white54),
+                //         onPressed: () => _removeSkill(title, i),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+            ],
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
@@ -181,6 +219,82 @@ class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveCli
       ),
     );
   }
+
+
+
+  // Widget _section(String title, List<TextEditingController> controllers) {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(vertical: 16),
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white.withOpacity(0.05),
+  //       borderRadius: BorderRadius.circular(16),
+  //       border: Border.all(color: Colors.white.withOpacity(0.15)),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.cyanAccent.withOpacity(0.1),
+  //           blurRadius: 10,
+  //           offset: const Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Expanded(
+  //               child: Text(
+  //                 title,
+  //                 style: const TextStyle(
+  //                   fontSize: 18,
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Colors.white,
+  //                   shadows: [Shadow(color: Colors.cyanAccent, blurRadius: 4)],
+  //                 ),
+  //               ),
+  //             ),
+  //             IconButton(
+  //               icon: const Icon(Icons.edit, color: Colors.grey),
+  //               onPressed: () => _editSkillSectionName(title),
+  //             ),
+  //             IconButton(
+  //               icon: const Icon(Icons.delete, color: Colors.grey),
+  //               onPressed: () => _deleteSkillSection(title),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 12),
+  //         ...controllers.asMap().entries.map((entry) {
+  //           final index = entry.key;
+  //           final controller = entry.value;
+  //           return Row(
+  //             children: [
+  //               Expanded(
+  //                 child: buildInputField(
+  //                   hint: "Enter a skill",
+  //                   controller: controller,
+  //                 ),
+  //               ),
+  //               IconButton(
+  //                 icon: const Icon(Icons.close, color: Colors.grey),
+  //                 onPressed: () => _removeSkill(title, index),
+  //               ),
+  //             ],
+  //           );
+  //         }).toList(),
+  //         Align(
+  //           alignment: Alignment.centerLeft,
+  //           child: TextButton.icon(
+  //             onPressed: () => _addSkill(title),
+  //             icon: const Icon(Icons.add, color: Colors.cyanAccent),
+  //             label: const Text("Add Skill", style: TextStyle(color: Colors.cyanAccent)),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
 
   // Widget _section(String title, List<Widget> children) {
@@ -235,28 +349,37 @@ class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveCli
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final sectionKeys = _skillSections.keys.toList();
+
     return Column(
       children: [
-        // ..._skillSections.entries.map((entry) {
-          // return _section(entry.key, [
-          //   ...entry.value.map((controller) => buildInputField(
-          //     hint: "Enter a skill",
-          //     controller: controller,
-          //   )),
-          //   Align(
-          //     alignment: Alignment.centerLeft,
-          //     child: TextButton.icon(
-          //       onPressed: () => _addSkill(entry.key),
-          //       icon: const Icon(Icons.add, color: Colors.cyanAccent),
-          //       label: const Text("Add Skill", style: TextStyle(color: Colors.cyanAccent)),
-          //     ),
-          //   ),
-          // ]);
-          ..._skillSections.entries.map((entry) {
-          return _section(entry.key, entry.value);
-          }),
+        ReorderableListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              final sectionName = sectionKeys.removeAt(oldIndex);
+              sectionKeys.insert(newIndex, sectionName);
 
-        // }),
+              // Rebuild _skillSections in new order
+              final reordered = <String, List<TextEditingController>>{};
+              for (final name in sectionKeys) {
+                reordered[name] = _skillSections[name]!;
+              }
+              _skillSections
+                ..clear()
+                ..addAll(reordered);
+            });
+          },
+          children: [
+            for (int i = 0; i < sectionKeys.length; i++)
+              Container(
+                key: ValueKey(sectionKeys[i]),
+                child: _section(sectionKeys[i], _skillSections[sectionKeys[i]]!),
+              ),
+          ],
+        ),
         const SizedBox(height: 12),
         Align(
           alignment: Alignment.centerLeft,
@@ -269,4 +392,43 @@ class SkillsSectionState extends State<SkillsSection> with AutomaticKeepAliveCli
       ],
     );
   }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   super.build(context);
+  //   return Column(
+  //     children: [
+  //       // ..._skillSections.entries.map((entry) {
+  //         // return _section(entry.key, [
+  //         //   ...entry.value.map((controller) => buildInputField(
+  //         //     hint: "Enter a skill",
+  //         //     controller: controller,
+  //         //   )),
+  //         //   Align(
+  //         //     alignment: Alignment.centerLeft,
+  //         //     child: TextButton.icon(
+  //         //       onPressed: () => _addSkill(entry.key),
+  //         //       icon: const Icon(Icons.add, color: Colors.cyanAccent),
+  //         //       label: const Text("Add Skill", style: TextStyle(color: Colors.cyanAccent)),
+  //         //     ),
+  //         //   ),
+  //         // ]);
+  //         ..._skillSections.entries.map((entry) {
+  //         return _section(entry.key, entry.value);
+  //         }),
+  //
+  //       // }),
+  //       const SizedBox(height: 12),
+  //       Align(
+  //         alignment: Alignment.centerLeft,
+  //         child: TextButton.icon(
+  //           onPressed: _promptNewSkillSection,
+  //           icon: const Icon(Icons.playlist_add, color: Colors.purpleAccent),
+  //           label: const Text("Add Skill Section", style: TextStyle(color: Colors.purpleAccent)),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
