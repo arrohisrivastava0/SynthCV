@@ -20,12 +20,14 @@ class ManualResumeForm extends StatefulWidget {
 }
 
 class _ManualResumeFormState extends State<ManualResumeForm> {
+  final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final educationKey = GlobalKey<DynamicEducationSectionState>();
-  final skillsKey = GlobalKey<SkillsSectionState>();
-  final experienceKey = GlobalKey<ExperienceSectionState>();
-  final projectKey = GlobalKey<ProjectsSectionState>();
-  final certificationKey = GlobalKey<CertificationsSectionState>();
+  final GlobalKey _basicInfoKey = GlobalKey();
+  // final educationKey = GlobalKey<DynamicEducationSectionState>();
+  // final skillsKey = GlobalKey<SkillsSectionState>();
+  // final experienceKey = GlobalKey<ExperienceSectionState>();
+  // final projectKey = GlobalKey<ProjectsSectionState>();
+  // final certificationKey = GlobalKey<CertificationsSectionState>();
   final GlobalKey<SkillsSectionState> _skillsKey = GlobalKey<SkillsSectionState>();
   final GlobalKey<DynamicEducationSectionState> _educationKey = GlobalKey<DynamicEducationSectionState>();
   final GlobalKey<ExperienceSectionState> _experienceKey = GlobalKey<ExperienceSectionState>();
@@ -39,47 +41,59 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
 
   bool isLoading = false;
 
-  Future<void> submitResume() async {
-    if (!_formKey.currentState!.validate()) return;
+  // Future<void> submitResume() async {
+  //   if (!_formKey.currentState!.validate()) return;
+  //
+  //   setState(() => isLoading = true);
+  //   final educationData = educationKey.currentState?.getEducation() ?? [];
+  //   final skillsData = skillsKey.currentState?.getSkills() ?? [];
+  //   final experienceData = experienceKey.currentState?.getExperiences() ?? [];
+  //   final projectData = projectKey.currentState?.getProjects() ?? [];
+  //   final certification = _certificationKey.currentState?.getCertifications() ?? [];
+  //
+  //   final resumeData = {
+  //     'name': nameController.text.trim(),
+  //     'email': emailController.text.trim(),
+  //     'phone': phoneController.text.trim(),
+  //     'education': educationData,
+  //     'experience': experienceData,
+  //     'skills': skillsData,
+  //     'projects': projectData,
+  //     'certifications': certification,
+  //     'submitted_at': DateTime.now().toIso8601String(),
+  //   };
+  //
+  //   final user = Supabase.instance.client.auth.currentUser;
+  //   if (user == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Not logged in.')));
+  //     setState(() => isLoading = false);
+  //     return;
+  //   }
+  //
+  //   try {
+  //     final response = await Supabase.instance.client
+  //         .from('manual_resumes')
+  //         .insert({'user_id': user.id, 'data': resumeData});
+  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Resume saved!')));
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+  //   }
+  //
+  //   setState(() => isLoading = false);
+  //
+  // }
 
-    setState(() => isLoading = true);
-    final educationData = educationKey.currentState?.getEducation() ?? [];
-    final skillsData = skillsKey.currentState?.getSkills() ?? [];
-    final experienceData = experienceKey.currentState?.getExperiences() ?? [];
-    final projectData = projectKey.currentState?.getProjects() ?? [];
-    final certification = _certificationKey.currentState?.getCertifications() ?? [];
-
-    final resumeData = {
-      'name': nameController.text.trim(),
-      'email': emailController.text.trim(),
-      'phone': phoneController.text.trim(),
-      'education': educationData,
-      'experience': experienceData,
-      'skills': skillsData,
-      'projects': projectData,
-      'certifications': certification,
-      'submitted_at': DateTime.now().toIso8601String(),
-    };
-
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Not logged in.')));
-      setState(() => isLoading = false);
-      return;
+  void scrollTo(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
     }
-
-    try {
-      final response = await Supabase.instance.client
-          .from('manual_resumes')
-          .insert({'user_id': user.id, 'data': resumeData});
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Resume saved!')));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
-
-    setState(() => isLoading = false);
-
   }
+
 
   void previewResume() {
     final name = nameController.text.trim();
@@ -113,6 +127,21 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
       'certifications': certification,
       'submitted_at': DateTime.now().toIso8601String(),
     };
+
+    if (education.isEmpty || education.first['level']!.isEmpty ?? true) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select your highest level of education.')));
+      // showSnackBar("Please select your highest level of education.");
+      scrollTo(_educationKey);
+      return;
+    }
+
+    if (skills.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please add at least one skill.')));
+      // showSnackBar("Please add at least one skill.");
+      scrollTo(_skillsKey);
+      return;
+    }
+
 
     Navigator.push(
       context,
@@ -181,11 +210,22 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
             key: _formKey,
             child: ListView(
               children: [
-                NeonSection(title: "Basic Information", children: [
-                  buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
-                  buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
-                  buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
-                ]),
+                KeyedSubtree(
+                  key: _basicInfoKey,
+                  child: NeonSection(
+                    title: "Basic Information",
+                    children: [
+                      buildInputField(hint: 'Full Name', controller: nameController, icon: Icons.person, isRequired: true),
+                      buildInputField(hint: 'Email', controller: emailController, icon: Icons.email, isRequired: true),
+                      buildInputField(hint: 'Phone', controller: phoneController, icon: Icons.phone, isRequired: true),
+                    ],
+                  ),
+                ),
+                // NeonSection(title: "Basic Information", children: [
+                //   buildInputField(icon: Icons.person, hint: 'Full Name', controller: nameController),
+                //   buildInputField(icon: Icons.email, hint: 'Email', controller: emailController),
+                //   buildInputField(icon: Icons.phone, hint: 'Phone', controller: phoneController),
+                // ]),
                 NeonSection(title: 'Education', children: [DynamicEducationSection(key: _educationKey)]),
                 NeonSection(title: 'Experience', children: [ExperienceSection(key: _experienceKey)]),
                 NeonSection(title: 'Skills', children: [SkillsSection(key: _skillsKey)]),
