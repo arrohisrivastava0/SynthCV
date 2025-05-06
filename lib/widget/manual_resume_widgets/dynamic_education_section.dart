@@ -80,10 +80,10 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
     if (_highestEducation == "Post-Graduation") {
       fields.add(
         _buildSection("Post-Graduation", [
-          buildInputField(hint: "Degree", controller: pgDegreeController),
-          buildInputField(hint: "University", controller: pgUniController),
-          buildInputField(hint: "Expected Graduation Year", controller: pgYearController),
-          buildInputField(hint: "CGPA", controller: pgCgpaController),
+          buildInputField(hint: "Degree*", controller: pgDegreeController),
+          buildInputField(hint: "University*", controller: pgUniController),
+          buildInputField(hint: "Expected Graduation Year*", controller: pgYearController),
+          buildInputField(hint: "Percentage/GPA*", controller: pgCgpaController),
           buildInputField(hint: "City", controller: pgCityController),
           buildInputField(hint: "State", controller: pgStateController),
         ]),
@@ -93,10 +93,10 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
     if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation") {
       fields.add(
         _buildSection("Graduation", [
-          buildInputField(hint: "Degree", controller: ugDegreeController),
-          buildInputField(hint: "University", controller: ugUniController),
-          buildInputField(hint: "Graduation Year", controller: ugYearController),
-          buildInputField(hint: "CGPA", controller: ugCgpaController),
+          buildInputField(hint: "Degree*", controller: ugDegreeController),
+          buildInputField(hint: "University*", controller: ugUniController),
+          buildInputField(hint: "Graduation Year*", controller: ugYearController),
+          buildInputField(hint: "Percentage/GPA*", controller: ugCgpaController),
           buildInputField(hint: "City", controller: ugCityController),
           buildInputField(hint: "State", controller: ugStateController),
         ]),
@@ -109,9 +109,9 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
       fields.add(
         _buildSection("Senior Secondary (Class 12)", [
           buildInputField(hint: "Board", controller: class12BoardController),
-          buildInputField(hint: "School Name", controller: class12SchoolController),
-          buildInputField(hint: "Passing Year", controller: class12YearController),
-          buildInputField(hint: "Percentage", controller: class12PercentageController),
+          buildInputField(hint: "School Name*", controller: class12SchoolController),
+          buildInputField(hint: "Passing Year*", controller: class12YearController),
+          buildInputField(hint: "Percentage/GPA*", controller: class12PercentageController),
           buildInputField(hint: "City", controller: class12CityController),
           buildInputField(hint: "State", controller: class12StateController),
         ]),
@@ -124,9 +124,9 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
       fields.add(
         _buildSection("Higher Secondary (Class 10)", [
           buildInputField(hint: "Board", controller: class10BoardController),
-          buildInputField(hint: "School Name", controller: class10SchoolController),
-          buildInputField(hint: "Passing Year", controller: class10YearController),
-          buildInputField(hint: "Percentage", controller: class10PercentageController),
+          buildInputField(hint: "School Name*", controller: class10SchoolController),
+          buildInputField(hint: "Passing Year*", controller: class10YearController),
+          buildInputField(hint: "Percentage/GPA*", controller: class10PercentageController),
           buildInputField(hint: "City", controller: class10CityController),
           buildInputField(hint: "State", controller: class10StateController),
         ]),
@@ -204,14 +204,29 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
     if (educationList.isEmpty) return false;
 
     for (final edu in educationList) {
-      if ((edu['degree']?.toString().isNotEmpty ?? false) &&
-          (edu['institution']?.toString().isNotEmpty ?? false)) {
-        return true; // At least one valid education entry
+      final level = edu['level'];
+      if (level == 'Post-Graduation' || level == 'Graduation') {
+        if ((edu['degree']?.isNotEmpty ?? false) &&
+            (edu['university']?.isNotEmpty ?? false) &&
+            (edu['graduation_year']?.isNotEmpty ?? false)&&
+            (edu['cgpa']?.isNotEmpty ?? false) &&
+            (edu['school']?.isNotEmpty ?? false) &&
+            (edu['passing_year']?.isNotEmpty ?? false) &&
+            (edu['percentage']?.isNotEmpty ?? false)) {
+          return true;
+        }
+      } else if (level == 'Senior Secondary' || level == 'Higher Secondary') {
+        if ((edu['school']?.isNotEmpty ?? false)&&
+            (edu['passing_year']?.isNotEmpty ?? false) &&
+            (edu['percentage']?.isNotEmpty ?? false)) {
+          return true;
+        }
       }
     }
 
     return false;
   }
+
 
   List<Map<String, String>> getEducation() {
     List<Map<String, String>> education = [];

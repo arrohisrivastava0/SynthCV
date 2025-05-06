@@ -130,10 +130,20 @@ class _ManualResumeFormState extends State<ManualResumeForm> {
       'certifications': certification,
       'submitted_at': DateTime.now().toIso8601String(),
     };
+    print("Resume: $resumeData");
     print("Education: ${resumeData['education']}");
+
     if (education.isEmpty ) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select your highest level of education.')));
       // showSnackBar("Please select your highest level of education.");
+      scrollTo(_educationKey);
+      return;
+    }
+
+    if (!_educationKey.currentState!.hasValidEducation()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please complete your highest education details.')),
+      );
       scrollTo(_educationKey);
       return;
     }

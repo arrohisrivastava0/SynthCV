@@ -836,7 +836,9 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/widget/neon_button.dart';
 
 extension StringCasingExtension on String {
@@ -1268,6 +1270,82 @@ class ResumePreviewPage extends StatelessWidget {
       ),
     );
   }
+// 'name': resumeData['name'],
+  // 'email': resumeData['email'],
+  // 'phone': resumeData['phone'],
+  // 'education': resumeData['education'],
+  // 'experience': resumeData['experience'],
+  // 'skills': resumeData['skills'],
+  // 'projects': resumeData['projects'],
+  // 'certifications': resumeData['certifications'],
+
+  void submitResume(BuildContext context) async {
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to submit a resume.')),
+      );
+      return;
+    }
+
+    try {
+      await supabase.from('resumes').insert({
+        'user_id': user.id,
+        'resume_data': resumeData,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Resume submitted successfully!')),
+      );
+    } on PostgrestException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Supabase error: ${e.message}')),
+      );
+      print('PostgrestException: $e');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unexpected error: $e')),
+      );
+      print('Unexpected error: $e');
+    }
+  }
+
+
+  // void submitResume(BuildContext context) async {
+  //   final supabase = Supabase.instance.client;
+  //   final user = supabase.auth.currentUser;
+  //
+  //   if (user == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('You must be logged in to submit a resume.')),
+  //     );
+  //     return;
+  //   }
+  //
+  //   try {
+  //     final response = await supabase.from('resumes').insert({
+  //       'user_id': user.id,
+  //       'resume_data': resumeData,
+  //       'created_at': DateTime.now().toIso8601String(),
+  //     });
+  //
+  //     if (response.error != null) {
+  //       throw response.error!;
+  //     }
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Resume submitted successfully!')),
+  //     );
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to submit resume: $e')),
+  //     );
+  //     print('Failed to submit resume: $e');
+  //   }
+  // }
 
 
   @override
@@ -1324,7 +1402,7 @@ class ResumePreviewPage extends StatelessWidget {
             NeonButton(
               text: "Submit Resume",
               isLoading: false,
-              onPressed: (){},
+              onPressed: () => submitResume(context),
             ),
           ],
         ),

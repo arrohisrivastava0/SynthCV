@@ -350,7 +350,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (_) => UploadResumeScreen()));
@@ -376,11 +376,17 @@ class HomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (_) => ResumePreviewPage(resumeData: resumeData),
+                    //   ),
+                    // );
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => ManualResumeForm()));
+                            builder: (_) => const ManualResumeForm()));
                   },
                 ),
               ],
