@@ -75,6 +75,8 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
   List<Widget> _educationFields() {
     List<Widget> fields = [];
 
+    if (_highestEducation == null) return fields;
+
     if (_highestEducation == "Post-Graduation") {
       fields.add(
         _buildSection("Post-Graduation", [
@@ -84,7 +86,6 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
           buildInputField(hint: "CGPA", controller: pgCgpaController),
           buildInputField(hint: "City", controller: pgCityController),
           buildInputField(hint: "State", controller: pgStateController),
-
         ]),
       );
     }
@@ -117,21 +118,100 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
       );
     }
 
-    fields.add(
-      _buildSection("Higher Secondary (Class 10)", [
-        buildInputField(hint: "Board", controller: class10BoardController),
-        buildInputField(hint: "School Name", controller: class10SchoolController),
-        buildInputField(hint: "Passing Year", controller: class10YearController),
-        buildInputField(hint: "Percentage", controller: class10PercentageController),
-        buildInputField(hint: "City", controller: class10CityController),
-        buildInputField(hint: "State", controller: class10StateController),
-      ]),
-    );
+    if (_highestEducation == "Post-Graduation" ||
+        _highestEducation == "Graduation" ||
+        _highestEducation == "Senior Secondary" ||_highestEducation == "Higher Secondary") {
+      fields.add(
+        _buildSection("Higher Secondary (Class 10)", [
+          buildInputField(hint: "Board", controller: class10BoardController),
+          buildInputField(hint: "School Name", controller: class10SchoolController),
+          buildInputField(hint: "Passing Year", controller: class10YearController),
+          buildInputField(hint: "Percentage", controller: class10PercentageController),
+          buildInputField(hint: "City", controller: class10CityController),
+          buildInputField(hint: "State", controller: class10StateController),
+        ]),
+      );
+    }
 
     return fields;
   }
 
+
+  // List<Widget> _educationFields() {
+  //   List<Widget> fields = [];
+  //
+  //   if (_highestEducation == "Post-Graduation") {
+  //     fields.add(
+  //       _buildSection("Post-Graduation", [
+  //         buildInputField(hint: "Degree", controller: pgDegreeController),
+  //         buildInputField(hint: "University", controller: pgUniController),
+  //         buildInputField(hint: "Expected Graduation Year", controller: pgYearController),
+  //         buildInputField(hint: "CGPA", controller: pgCgpaController),
+  //         buildInputField(hint: "City", controller: pgCityController),
+  //         buildInputField(hint: "State", controller: pgStateController),
+  //
+  //       ]),
+  //     );
+  //   }
+  //
+  //   else if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation") {
+  //     fields.add(
+  //       _buildSection("Graduation", [
+  //         buildInputField(hint: "Degree", controller: ugDegreeController),
+  //         buildInputField(hint: "University", controller: ugUniController),
+  //         buildInputField(hint: "Graduation Year", controller: ugYearController),
+  //         buildInputField(hint: "CGPA", controller: ugCgpaController),
+  //         buildInputField(hint: "City", controller: ugCityController),
+  //         buildInputField(hint: "State", controller: ugStateController),
+  //       ]),
+  //     );
+  //   }
+  //
+  //   else if (_highestEducation == "Post-Graduation" ||
+  //       _highestEducation == "Graduation" ||
+  //       _highestEducation == "Senior Secondary") {
+  //     fields.add(
+  //       _buildSection("Senior Secondary (Class 12)", [
+  //         buildInputField(hint: "Board", controller: class12BoardController),
+  //         buildInputField(hint: "School Name", controller: class12SchoolController),
+  //         buildInputField(hint: "Passing Year", controller: class12YearController),
+  //         buildInputField(hint: "Percentage", controller: class12PercentageController),
+  //         buildInputField(hint: "City", controller: class12CityController),
+  //         buildInputField(hint: "State", controller: class12StateController),
+  //       ]),
+  //     );
+  //   }
+  //
+  //   else if(_highestEducation == "Higher Secondary"){
+  //     fields.add(
+  //       _buildSection("Higher Secondary (Class 10)", [
+  //         buildInputField(hint: "Board", controller: class10BoardController),
+  //         buildInputField(hint: "School Name", controller: class10SchoolController),
+  //         buildInputField(hint: "Passing Year", controller: class10YearController),
+  //         buildInputField(hint: "Percentage", controller: class10PercentageController),
+  //         buildInputField(hint: "City", controller: class10CityController),
+  //         buildInputField(hint: "State", controller: class10StateController),
+  //       ]),
+  //     );
+  //   }
+  //   return fields;
+  // }
+
   // Map<String, List<Map<String, String>>>
+
+  bool hasValidEducation() {
+    final educationList = getEducation();
+    if (educationList.isEmpty) return false;
+
+    for (final edu in educationList) {
+      if ((edu['degree']?.toString().isNotEmpty ?? false) &&
+          (edu['institution']?.toString().isNotEmpty ?? false)) {
+        return true; // At least one valid education entry
+      }
+    }
+
+    return false;
+  }
 
   List<Map<String, String>> getEducation() {
     List<Map<String, String>> education = [];
@@ -160,7 +240,7 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
       });
     }
 
-    if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation" || _highestEducation == "Senior Secondary") {
+    if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation" || _highestEducation == "Senior Secondary" ) {
       education.add({
         'level': 'Senior Secondary',
         'board': class12BoardController.text.trim(),
@@ -172,15 +252,17 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
       });
     }
 
-    education.add({
-      'level': 'Higher Secondary',
-      'board': class10BoardController.text.trim(),
-      'school': class10SchoolController.text.trim(),
-      'passing_year': class10YearController.text.trim(),
-      'percentage': class10PercentageController.text.trim(),
-      'city': class10CityController.text.trim(),
-      'state': class10StateController.text.trim(),
-    });
+    if (_highestEducation == "Post-Graduation" || _highestEducation == "Graduation" || _highestEducation == "Senior Secondary"|| _highestEducation ==  "Higher Secondary"){
+      education.add({
+        'level': 'Higher Secondary',
+        'board': class10BoardController.text.trim(),
+        'school': class10SchoolController.text.trim(),
+        'passing_year': class10YearController.text.trim(),
+        'percentage': class10PercentageController.text.trim(),
+        'city': class10CityController.text.trim(),
+        'state': class10StateController.text.trim(),
+      });
+    }
 
     return education;
   }
