@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         fontFamily: 'Montserrat',
       ),
-      home: const Login(),
+      home: const SplashScreen(),
     );
   }
 }

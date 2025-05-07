@@ -78,9 +78,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class JobDescriptionInputScreen extends StatefulWidget {
   final Function(String) onJobDescriptionSubmitted;
@@ -94,6 +96,7 @@ class JobDescriptionInputScreen extends StatefulWidget {
 }
 
 class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
+  File? _selectedFile;
   final TextEditingController _jdController = TextEditingController();
   String? uploadedJDText;
 
@@ -101,9 +104,29 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
     final result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
     if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
       // TODO: Add PDF parsing logic
     }
+  }
+
+  // Future<List<int>> _readDocumentData(File file) async {
+  //   final ByteData data = await rootBundle.load(file.path);
+  //   return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  // }
+
+  Future<void> extractTextFromPdf(String path) async {
+    final File file = File(path);
+    final List<int> bytes = await file.readAsBytes();
+
+    // Load PDF
+    final PdfDocument document = PdfDocument(inputBytes: bytes);
+
+    // Extract all text
+    String text = PdfTextExtractor(document).extractText();
+    print("Extracted text: $text");
+    document.dispose();
   }
 
   Future<void> _submitJD() async {
@@ -117,6 +140,8 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
       );
       return;
     }
+
+    await extractTextFromPdf(_selectedFile!.path);
 
     final jd = _jdController.text.trim();
 

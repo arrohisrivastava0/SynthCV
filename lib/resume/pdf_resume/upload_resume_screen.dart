@@ -94,6 +94,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:synthcv/resume/pdf_resume/resume_service.dart';
 import 'package:synthcv/screens/home_screen.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
@@ -157,10 +158,29 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
     if (url != null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload successful!')));
+      await extractTextFromPdf(_selectedFile!.path);
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload failed')));
     }
+  }
+
+  Future<void> extractTextFromPdf(String path) async {
+    final File file = File(path);
+    final List<int> bytes = await file.readAsBytes();
+
+    // Load PDF
+    final PdfDocument document = PdfDocument(inputBytes: bytes);
+
+    // Extract all text
+    String text = PdfTextExtractor(document).extractText();
+    // String fullText = '';
+    // for (int i = 0; i < document.pages.count; i++) {
+    //   fullText += document.pages[i].extractText() ?? '';
+    // }
+
+    print("Extracted text: $text");
+    document.dispose();
   }
 
   @override
