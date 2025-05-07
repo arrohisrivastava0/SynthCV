@@ -80,14 +80,17 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JobDescriptionInputScreen extends StatefulWidget {
   final Function(String) onJobDescriptionSubmitted;
 
-  const JobDescriptionInputScreen({required this.onJobDescriptionSubmitted, super.key});
+  const JobDescriptionInputScreen(
+      {required this.onJobDescriptionSubmitted, super.key});
 
   @override
-  State<JobDescriptionInputScreen> createState() => _JobDescriptionInputScreenState();
+  State<JobDescriptionInputScreen> createState() =>
+      _JobDescriptionInputScreenState();
 }
 
 class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
@@ -95,23 +98,54 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
   String? uploadedJDText;
 
   Future<void> _pickPDF() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+    final result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
     if (result != null && result.files.single.path != null) {
       final file = File(result.files.single.path!);
       // TODO: Add PDF parsing logic
     }
   }
 
-  void _submitJD() {
+  Future<void> _submitJD() async {
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('You must be logged in to submit a resume.')),
+      );
+      return;
+    }
+
     final jd = _jdController.text.trim();
+
     if (jd.isNotEmpty) {
       widget.onJobDescriptionSubmitted(jd);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Job description submitted!')),
-      );
+      try {
+        await supabase.from('formed_resumes').insert({
+          'user_id': user.id,
+          'jd_text': jd,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Job description submitted!')),
+        );
+      } on PostgrestException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Supabase error: ${e.message}')),
+        );
+        print('PostgrestException: $e');
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unexpected error: $e')),
+        );
+        print('Unexpected error: $e');
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter or upload a job description.')),
+        const SnackBar(
+            content: Text('Please enter or upload a job description.')),
       );
     }
   }
@@ -197,10 +231,13 @@ class _NeonButton extends StatelessWidget {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: GoogleFonts.orbitron(fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           side: BorderSide(color: glowColor.withOpacity(0.7)),
         ),
-        icon: icon != null ? Icon(icon, color: glowColor) : const SizedBox.shrink(),
+        icon: icon != null
+            ? Icon(icon, color: glowColor)
+            : const SizedBox.shrink(),
         label: Text(label),
       ),
     );
@@ -246,4 +283,3 @@ class _GlowingTextField extends StatelessWidget {
     );
   }
 }
-
