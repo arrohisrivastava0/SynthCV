@@ -238,7 +238,7 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
                         : "Choose PDF",
                     onPressed: _pickPdf,
                     isDisabled: false,
-                    borderColor: Colors.cyanAccent,
+                    // borderColor: Colors.cyanAccent,
                     glowColor: Colors.cyanAccent,
                   ),
                   const SizedBox(height: 20),
@@ -248,7 +248,7 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
                     isLoading: _isUploading,
                     isDisabled: _isUploading || _selectedFile == null,
                     onPressed: _uploadPdf,
-                    borderColor: Colors.purpleAccent,
+                    // borderColor: Colors.purpleAccent,
                     glowColor: Colors.purpleAccent,
                   ),
                   // ElevatedButton.icon(
