@@ -839,6 +839,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synthcv/screens/job_description_input_screen.dart';
 import 'package:synthcv/widget/neon_button.dart';
 
 extension StringCasingExtension on String {
@@ -1300,6 +1301,19 @@ class ResumePreviewPage extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Resume submitted successfully!')),
       );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => JobDescriptionInputScreen(
+            onJobDescriptionSubmitted: (jdText) {
+              // Save to Supabase or pass to AI for keyword extraction
+              print('JD submitted: $jdText');
+            },
+          ),
+        ),
+      );
+
     } on PostgrestException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Supabase error: ${e.message}')),
