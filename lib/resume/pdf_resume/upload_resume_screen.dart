@@ -97,6 +97,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:synthcv/resume/pdf_resume/resume_service.dart';
 import 'package:synthcv/screens/home_screen.dart';
+import 'package:synthcv/screens/job_description_input_screen.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
 
 class UploadResumeScreen extends StatefulWidget {
@@ -159,6 +160,17 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload successful!')));
       await extractTextFromPdf(_selectedFile!.path);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => JobDescriptionInputScreen(
+            onJobDescriptionSubmitted: (jdText) {
+              // Save to Supabase or pass to AI for keyword extraction
+              print('JD submitted: $jdText');
+            },
+          ),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload failed')));

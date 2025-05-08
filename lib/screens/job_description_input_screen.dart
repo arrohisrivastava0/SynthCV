@@ -83,6 +83,8 @@ import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:synthcv/services/gemini_service.dart';
+import 'package:synthcv/widget/simple_neon_button.dart';
 
 class JobDescriptionInputScreen extends StatefulWidget {
   final Function(String) onJobDescriptionSubmitted;
@@ -94,39 +96,163 @@ class JobDescriptionInputScreen extends StatefulWidget {
   State<JobDescriptionInputScreen> createState() =>
       _JobDescriptionInputScreenState();
 }
+//
+// class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
+//   File? _selectedFile;
+//   final TextEditingController _jdController = TextEditingController();
+//   String? uploadedJDText;
+//
+//   Future<void> _pickPDF() async {
+//     final result = await FilePicker.platform
+//         .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+//     if (result != null && result.files.single.path != null) {
+//       final filePath = result.files.single.path!;
+//       setState(() {
+//         _selectedFile = File(filePath);
+//       });
+//
+//       await extractTextFromPdf(filePath);
+//     }
+//   }
+//
+//   // Future<List<int>> _readDocumentData(File file) async {
+//   //   final ByteData data = await rootBundle.load(file.path);
+//   //   return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+//   // }
+//
+//   Future<void> extractTextFromPdf(String path) async {
+//     final File file = File(path);
+//     final List<int> bytes = await file.readAsBytes();
+//
+//     // Load PDF
+//     final PdfDocument document = PdfDocument(inputBytes: bytes);
+//
+//     // Extract all text
+//     String text = PdfTextExtractor(document).extractText();
+//     print("Extracted text: $text");
+//     document.dispose();
+//   }
+//
+//   Future<void> _submitJD() async {
+//     final supabase = Supabase.instance.client;
+//     final user = supabase.auth.currentUser;
+//
+//     if (user == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//             content: Text('You must be logged in to submit a resume.')),
+//       );
+//       return;
+//     }
+//
+//     // await extractTextFromPdf(_selectedFile!.path);
+//
+//     final jd = _jdController.text.trim();
+//
+//     if (jd.isNotEmpty) {
+//       widget.onJobDescriptionSubmitted(jd);
+//       try {
+//         await supabase.from('job_descriptions').insert({
+//           'user_id': user.id,
+//           'jd_text': jd,
+//           'created_at': DateTime.now().toIso8601String(),
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           const SnackBar(content: Text('Job description submitted!')),
+//         );
+//       } on PostgrestException catch (e) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Supabase error: ${e.message}')),
+//         );
+//         print('PostgrestException: $e');
+//       } catch (e) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('Unexpected error: $e')),
+//         );
+//         print('Unexpected error: $e');
+//       }
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//             content: Text('Please enter or upload a job description.')),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Job Description"),
+//         backgroundColor: Colors.transparent,
+//         elevation: 0,
+//       ),
+//       body: Container(
+//         padding: const EdgeInsets.all(20),
+//         width: double.infinity,
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [Color(0xFF121212), Color(0xFF1A1B2F)],
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//           ),
+//         ),
+//         child: SingleChildScrollView(
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               _NeonButton(
+//                 onPressed: _pickPDF,
+//                 icon: Icons.upload_file,
+//                 label: "Upload JD as PDF",
+//                 glowColor: Colors.cyanAccent,
+//               ),
+//               const SizedBox(height: 24),
+//               _GlowingTextField(
+//                 controller: _jdController,
+//                 hint: "Paste or edit job description here...",
+//               ),
+//               const SizedBox(height: 30),
+//               _NeonButton(
+//                 onPressed: _submitJD,
+//                 label: "Submit Job Description",
+//                 glowColor: Colors.purpleAccent,
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
   File? _selectedFile;
   final TextEditingController _jdController = TextEditingController();
-  String? uploadedJDText;
+  bool _isPDFSelected = false;
+  bool _isTextEntered = false;
 
   Future<void> _pickPDF() async {
     final result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
     if (result != null && result.files.single.path != null) {
+      final filePath = result.files.single.path!;
+
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        _selectedFile = File(filePath);
+        _isPDFSelected = true;
+        _isTextEntered = false;
+        _jdController.clear(); // Clear text input
       });
-      // TODO: Add PDF parsing logic
     }
   }
 
-  // Future<List<int>> _readDocumentData(File file) async {
-  //   final ByteData data = await rootBundle.load(file.path);
-  //   return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  // }
-
-  Future<void> extractTextFromPdf(String path) async {
-    final File file = File(path);
-    final List<int> bytes = await file.readAsBytes();
-
-    // Load PDF
-    final PdfDocument document = PdfDocument(inputBytes: bytes);
-
-    // Extract all text
-    String text = PdfTextExtractor(document).extractText();
-    print("Extracted text: $text");
-    document.dispose();
+  Future<String> extractTextFromPdf(String path) async {
+    final bytes = await File(path).readAsBytes();
+    final doc = PdfDocument(inputBytes: bytes);
+    final text = PdfTextExtractor(doc).extractText();
+    doc.dispose();
+    return text;
   }
 
   Future<void> _submitJD() async {
@@ -135,54 +261,123 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
 
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('You must be logged in to submit a resume.')),
+        const SnackBar(content: Text('Login required to submit.')),
       );
       return;
     }
 
-    // await extractTextFromPdf(_selectedFile!.path);
+    String? jdContent;
 
-    final jd = _jdController.text.trim();
+    if (_isPDFSelected && _selectedFile != null) {
+      jdContent = await extractTextFromPdf(_selectedFile!.path);
+    } else if (_isTextEntered && _jdController.text.trim().isNotEmpty) {
+      jdContent = _jdController.text.trim();
+    }
 
-    if (jd.isNotEmpty) {
-      widget.onJobDescriptionSubmitted(jd);
-      try {
-        await supabase.from('job_descriptions').insert({
-          'user_id': user.id,
-          'jd_text': jd,
-          'created_at': DateTime.now().toIso8601String(),
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Job description submitted!')),
-        );
-      } on PostgrestException catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Supabase error: ${e.message}')),
-        );
-        print('PostgrestException: $e');
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unexpected error: $e')),
-        );
-        print('Unexpected error: $e');
-      }
-    } else {
+    if (jdContent == null || jdContent.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please enter or upload a job description.')),
+        const SnackBar(content: Text('Please upload or enter a JD.')),
+      );
+      return;
+    }
+
+    try {
+      final structured = await GeminiService.extractJobDescriptionJSON(jdContent);
+
+      await supabase.from('job_descriptions').insert({
+        'user_id': user.id,
+        'jd_text': jdContent,
+        'structured_json': structured,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Job description submitted!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
       );
     }
+  }
+
+
+  // Future<void> _submitJD() async {
+  //   final supabase = Supabase.instance.client;
+  //   final user = supabase.auth.currentUser;
+  //
+  //   if (user == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Login required to submit.')),
+  //     );
+  //     return;
+  //   }
+  //
+  //   String? jdContent;
+  //
+  //   if (_isPDFSelected && _selectedFile != null) {
+  //     jdContent = await extractTextFromPdf(_selectedFile!.path);
+  //   } else if (_isTextEntered && _jdController.text.trim().isNotEmpty) {
+  //     jdContent = _jdController.text.trim();
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Please upload or enter a JD.')),
+  //     );
+  //     return;
+  //   }
+  //
+  //   if (jdContent==null) {
+  //     try {
+  //       final structured = await GeminiService.extractJobDescriptionJSON(jdContent!);
+  //
+  //       await supabase.from('job_descriptions').insert({
+  //         'user_id': user.id,
+  //         'jd_text': jdContent,
+  //         'structured_json': structured,
+  //         'created_at': DateTime.now().toIso8601String(),
+  //       });
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Job description submitted!')),
+  //       );
+  //     } catch (e) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Error: $e')),
+  //       );
+  //     }
+  //   }
+  //   else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //           content: Text('Please enter or upload a job description.')),
+  //     );
+  //   }
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _jdController.addListener(() {
+      setState(() {
+        _isTextEntered = _jdController.text.trim().isNotEmpty;
+        if (_isTextEntered) {
+          _isPDFSelected = false;
+          _selectedFile = null;
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _jdController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Job Description"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text("Job Description")),
       body: Container(
         padding: const EdgeInsets.all(20),
         width: double.infinity,
@@ -195,18 +390,31 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _NeonButton(
-                onPressed: _pickPDF,
+              NeonIconButton(
                 icon: Icons.upload_file,
-                label: "Upload JD as PDF",
+                label: _selectedFile != null
+                    ? "Selected: ${_selectedFile!.path.split('/').last}"
+                    : "Choose PDF",
+                onPressed: _pickPDF,
+                isDisabled: _isTextEntered,
+                // borderColor: Colors.cyanAccent,
                 glowColor: Colors.cyanAccent,
               ),
+              // _NeonButton(
+              //   onPressed: _isTextEntered ? null : () => _pickPDF(),
+              //   icon: Icons.upload_file,
+              //   label: _isPDFSelected
+              //       ? "PDF Uploaded"
+              //       : "Upload JD as PDF",
+              //   glowColor:
+              //   _isPDFSelected ? Colors.greenAccent : Colors.cyanAccent,
+              // ),
               const SizedBox(height: 24),
               _GlowingTextField(
                 controller: _jdController,
                 hint: "Paste or edit job description here...",
+                enabled: !_isPDFSelected,
               ),
               const SizedBox(height: 30),
               _NeonButton(
@@ -221,6 +429,7 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
     );
   }
 }
+
 
 // Neon-style glowing button
 class _NeonButton extends StatelessWidget {
@@ -273,10 +482,13 @@ class _NeonButton extends StatelessWidget {
 class _GlowingTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
+  final bool enabled;
 
   const _GlowingTextField({
     required this.controller,
     required this.hint,
+    this.enabled=true
+
   });
 
   @override
@@ -296,6 +508,7 @@ class _GlowingTextField extends StatelessWidget {
         ],
       ),
       child: TextField(
+        enabled: enabled,
         controller: controller,
         maxLines: 12,
         style: GoogleFonts.rubik(color: Colors.white, fontSize: 15),
