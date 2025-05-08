@@ -141,14 +141,14 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
       return;
     }
 
-    await extractTextFromPdf(_selectedFile!.path);
+    // await extractTextFromPdf(_selectedFile!.path);
 
     final jd = _jdController.text.trim();
 
     if (jd.isNotEmpty) {
       widget.onJobDescriptionSubmitted(jd);
       try {
-        await supabase.from('formed_resumes').insert({
+        await supabase.from('job_descriptions').insert({
           'user_id': user.id,
           'jd_text': jd,
           'created_at': DateTime.now().toIso8601String(),
