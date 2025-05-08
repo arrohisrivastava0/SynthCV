@@ -26,9 +26,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
-    url: 'https://hthievkrcnffgfzzuuye.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0aGlldmtyY25mZmdmenp1dXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1Njg1MzksImV4cCI6MjA2MDE0NDUzOX0.MwJydAWcUVX-wGf4HxQGeD-kJsR2tx0_ZyWA9zm4UuM',
-  );
+    url: dotenv.env['URL']!, anonKey: dotenv.env['ANON_KEY']!
+    );
 
   runApp(MyApp());
 }

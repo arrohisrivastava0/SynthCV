@@ -1,5 +1,6 @@
 // Add these imports if not already present
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -79,8 +80,8 @@ class _LoginScreenState extends State<Login> with TickerProviderStateMixin {
 
   Future<void> _loginWithGoogle() async {
     // Replace with your actual client IDs
-    const webClientId = '533019427026-obag8emhljtuff02e9e2g1u4mv5hpi2g.apps.googleusercontent.com';
-    const iosClientId = '533019427026-eljpdsttr86aj85mi3ssopc7p5uekk9q.apps.googleusercontent.com';
+    final webClientId = dotenv.env['WEB_CLIENT_ID'];
+    final iosClientId = dotenv.env['IOS_CLIENT_ID'];
 
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
