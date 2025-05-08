@@ -46,7 +46,7 @@ class GeminiService {
     }
   }
 
-  static Future<String?> extractResumeJSON(String rawResumeText) {
+  static Future<Map<String, dynamic>?> extractResumeJSON(String rawResumeText) {
     final prompt = '''
     You are an AI assistant that reads raw resume text and extracts it into a clean and structured JSON format with the following fields:
 - name
@@ -62,11 +62,106 @@ class GeminiService {
 Here is the resume raw text:
 
 $rawResumeText
+Example resultant JSON: 
+{
+  "name": "xyz",
+  "email": "xyz@gmail.com",
+  "phone": "(+91)827429494",
+  "other_profiles": [
+    {
+      "type": "linkedin",
+      "url": "linkedin.com/in/--"
+    },
+    {
+      "type": "github",
+      "url": "github.com/a---"
+    },
+    {...}
+  ],
+  "skills": {
+    "Languages": [
+      "Java",
+      "C++",
+    ],
+    "Frameworks & Tools": [
+      "Android SDK",
+      "Flutter",
+    ],
+    "Hard Skills": [
+      "Flutter Development",
+      "Android Development",
+    ],
+    "Soft Skills": [
+      "Project Management",
+    ],
+    "xyz" : [..]
+  },
+  "education": [
+    {
+      "degree": "btech",
+      "institution": "abc University",
+      "location": "city, state",
+      "graduation_year": "yyyy",
+      "grade": "CGPA: 6.55"
+    },
+    {
+      "degree": "xyz",
+      "institution": "xyz",
+      "location": "city, state",
+      "graduation_year": "yyyy",
+      "grade": "Percentage: 80%"
+    },
+    {...}
+  ],
+  "experience": {
+    "work": [
+      {
+        "title": "Android Developer",
+        "company": "RemoDesk",
+        "dates": "June 2024 - July 2024",
+        "description": "Developed and maintained Android applications using Kotlin and Java, collaborated with a team of developers on feature design, and integrated REST APIs for data retrieval and processing. Conducted 10+ code reviews, optimized app performance by 15%, and enhanced UI design. Performed manual and automated testing to ensure 99% application quality, participated in weekly team meetings, and contributed to technical documentation guides."
+      },
+      {..}
+    ],
+    "leadership": [
+      {
+        "title": "Technical Lead",
+        "organization": "VIT Bhopal University • Android Club",
+        "dates": "May 2024 – Feb 2025",
+        "description": [
+          "Leading the technical department of the Android Club of VIT Bhopal University consisting of multiple tech departments with over 120 students.",
+          "Led technical sessions on Android development for over 300 students in a Tech Event organized by VIT Bhopal University.",
+          "Led and facilitated a hands-on workshops and delivered instructions on IoT, ML, and Android integration for over 130 students in the Android Fusion Event organized by Android Club VIT Bhopal University."
+        ]
+      },
+      {...}
+    ]
+  },
+  "projects": [
+    {
+      "name": "The Wall",
+      "technologies": "Flutter, Firebase Firestore",
+      "date": "January 2025",
+      "description": "Built a full-featured social media application using Flutter and Firebase Firestore. Enabled users to post text updates on \"The Wall,\" connect with others, like posts and comments, add comments, and edit their profiles. Integrated real-time updates and scalable data handling for a smooth user experience.",
+      "link": "http//..."
+    },
+    {...},
+  ],
+  "certifications": [
+    {
+      "name": "NPTEL Cloud Computing",
+      "organization": "SWAYAM MHRD",
+      "year": "2024",
+      "verification_link": "http..."
+    },
+    {...}
+  ]
+}
 ''';
-    return _getRawGeminiResponse(prompt);
+    return generateStructuredMap(prompt);
   }
 
-  static Future<String?> extractJobDescriptionJSON(String jdText) {
+  static Future<Map<String, dynamic>?> extractJobDescriptionJSON(String jdText) {
     final prompt = '''
 Here is a job description:
 
@@ -78,9 +173,17 @@ Extract this as structured JSON:
 - required_skills
 - responsibilities
 - qualifications (list of eligibility and other requirements if any)
+- keywords and their frequency and importance for ats score
 ''';
-    return _getRawGeminiResponse(prompt);
+    return generateStructuredMap(prompt);
   }
+
+  static String _stripMarkdownCodeBlock(String text) {
+    final regex = RegExp(r'^```(?:json)?\s*([\s\S]*)\s*```$', multiLine: true);
+    final match = regex.firstMatch(text.trim());
+    return match != null ? match.group(1)!.trim() : text;
+  }
+
 
   /// ✅ Returns parsed JSON from Gemini as a Map
   static Future<Map<String, dynamic>?> generateStructuredMap(
@@ -88,10 +191,18 @@ Extract this as structured JSON:
     final rawText = await _getRawGeminiResponse(prompt);
     if (rawText == null) return null;
 
+    // try {
+    //   return jsonDecode(rawText);
+    // } catch (e) {
+    //   print("Error parsing Gemini response: $e");
+    //   return null;
+    // }
+
     try {
-      return jsonDecode(rawText);
+      final cleaned = _stripMarkdownCodeBlock(rawText);
+      return jsonDecode(cleaned);
     } catch (e) {
-      print("Error parsing Gemini response: $e");
+      print("❌ Error parsing Gemini response: $e");
       return null;
     }
   }
@@ -102,14 +213,14 @@ Extract this as structured JSON:
   }) async {
     final prompt = '''
 You are an ATS (Applicant Tracking System) evaluation engine.
-
-Compare the following resume with the job description and provide:
+Compare the following resume with the job description strictly, keeping in mind the keywords, the quality of the resume and etc and provide:
 
 1. ATS Match Score (out of 100)
-2. Chance of getting hired (choose from [Excellent Chance, Strong Chance, Good Chance, Fair Chance (with Focused Growth), Low Chance for this role (Focus on Growth Areas)])
+2. Chance of getting hired (choose from [Excellent, Strong, Good, Fair, Low])
 3. Matching Skills
 4. Missing Skills
 5. Areas of Improvement (suggestions)
+6. Very short key points for suggestions to improve
 
 Resume:
 ${jsonEncode(resumeJson)}
@@ -120,10 +231,11 @@ ${jsonEncode(jdJson)}
 Respond in JSON format:
 {
   "ats_score": 87,
-  "chance_of_getting_hired": Strong Chance
+  "hiring_probability": Strong
   "matching_skills": [...],
   "missing_skills": [...],
   "suggestions": [...]
+  "key_suggestions": [...]
 }
 ''';
 

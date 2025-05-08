@@ -83,6 +83,7 @@ import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:synthcv/screens/ats_analysis_screen.dart';
 import 'package:synthcv/services/gemini_service.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
 
@@ -286,20 +287,40 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
 
       await supabase.from('job_descriptions').insert({
         'user_id': user.id,
-        'jd_text': jdContent,
-        'structured_json': structured,
+        'jd_json': structured,
         'created_at': DateTime.now().toIso8601String(),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Job description submitted!')),
       );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ATSAnalysisScreen(
+            atsScore: 78,
+            matchPercentage: 82,
+            hiringProbability: "Moderate",
+            suggestions: [
+              "Add 'Firebase' under skills.",
+              "Mention your internship at ABC in the experience section.",
+              "Highlight your leadership in project XYZ."
+            ],
+            onRegenerateResume: () {
+              // Navigate to resume builder or call regeneration logic
+            },
+          ),
+        ),
+      );
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     }
   }
+
 
 
   // Future<void> _submitJD() async {

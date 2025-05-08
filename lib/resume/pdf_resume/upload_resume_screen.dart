@@ -98,6 +98,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:synthcv/resume/pdf_resume/resume_service.dart';
 import 'package:synthcv/screens/home_screen.dart';
 import 'package:synthcv/screens/job_description_input_screen.dart';
+import 'package:synthcv/services/gemini_service.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
 
 class UploadResumeScreen extends StatefulWidget {
@@ -157,9 +158,10 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
     });
 
     if (url != null) {
+      await extractTextFromPdf(_selectedFile!.path);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload successful!')));
-      await extractTextFromPdf(_selectedFile!.path);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -198,9 +200,10 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
       return;
     }
     try{
-      await supabase.from('formed_resumes').insert({
+      final structured = await GeminiService.extractResumeJSON(text);
+      await supabase.from('uploaded_resumes').insert({
         'user_id': user.id,
-        'extracted_text': text,
+        'resume_json': structured,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
