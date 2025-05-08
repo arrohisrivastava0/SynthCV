@@ -174,12 +174,38 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
 
     // Extract all text
     String text = PdfTextExtractor(document).extractText();
-    // String fullText = '';
-    // for (int i = 0; i < document.pages.count; i++) {
-    //   fullText += document.pages[i].extractText() ?? '';
-    // }
 
     print("Extracted text: $text");
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to submit a resume.')),
+      );
+      return;
+    }
+    try{
+      await supabase.from('formed_resumes').insert({
+        'user_id': user.id,
+        'extracted_text': text,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Resume submitted successfully!')),
+      );
+    } on PostgrestException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Supabase error: ${e.message}')),
+      );
+      print('PostgrestException: $e');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unexpected error: $e')),
+      );
+      print('Unexpected error: $e');
+    }
+
     document.dispose();
   }
 

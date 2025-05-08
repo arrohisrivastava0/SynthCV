@@ -11,6 +11,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,6 +23,7 @@ void main() async {
   final appDocDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocDir.path);
   await Hive.openBox('loginBox');
+  await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
     url: 'https://hthievkrcnffgfzzuuye.supabase.co',
