@@ -161,18 +161,6 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
       await extractTextFromPdf(_selectedFile!.path);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload successful!')));
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => JobDescriptionInputScreen(
-            onJobDescriptionSubmitted: (jdText) {
-              // Save to Supabase or pass to AI for keyword extraction
-              print('JD submitted: $jdText');
-            },
-          ),
-        ),
-      );
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Upload failed')));
@@ -201,13 +189,20 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
     }
     try{
       final structured = await GeminiService.extractResumeJSON(text);
-      await supabase.from('uploaded_resumes').insert({
+      final response= await supabase.from('uploaded_resumes').insert({
         'user_id': user.id,
         'resume_json': structured,
-      });
+      }).select()
+        .single();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Resume submitted successfully!')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => JobDescriptionInputScreen(resumeIdInit: response['id'])
+        ),
       );
     } on PostgrestException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

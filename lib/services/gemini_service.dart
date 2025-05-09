@@ -62,7 +62,7 @@ class GeminiService {
 Here is the resume raw text:
 
 $rawResumeText
-Example resultant JSON: 
+Here is an example resultant JSON: 
 {
   "name": "xyz",
   "email": "xyz@gmail.com",
@@ -191,13 +191,6 @@ Extract this as structured JSON:
     final rawText = await _getRawGeminiResponse(prompt);
     if (rawText == null) return null;
 
-    // try {
-    //   return jsonDecode(rawText);
-    // } catch (e) {
-    //   print("Error parsing Gemini response: $e");
-    //   return null;
-    // }
-
     try {
       final cleaned = _stripMarkdownCodeBlock(rawText);
       return jsonDecode(cleaned);
@@ -212,6 +205,7 @@ Extract this as structured JSON:
     required Map<String, dynamic> jdJson,
   }) async {
     final prompt = '''
+    
 You are an ATS (Applicant Tracking System) evaluation engine.
 Compare the following resume with the job description strictly, keeping in mind the keywords, the quality of the resume and etc and provide:
 
@@ -219,8 +213,9 @@ Compare the following resume with the job description strictly, keeping in mind 
 2. Chance of getting hired (choose from [Excellent, Strong, Good, Fair, Low])
 3. Matching Skills
 4. Missing Skills
-5. Areas of Improvement (suggestions)
-6. Very short key points for suggestions to improve
+5. Short summary of the analysis in active voice, as if talking directly to the candidate
+6. Areas of Improvement (suggestions)
+7. Very short key points for suggestions to improve
 
 Resume:
 ${jsonEncode(resumeJson)}
@@ -234,6 +229,7 @@ Respond in JSON format:
   "hiring_probability": Strong
   "matching_skills": [...],
   "missing_skills": [...],
+  "analysis_summary":"abc.. ",
   "suggestions": [...]
   "key_suggestions": [...]
 }

@@ -16,6 +16,8 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/auth/login.dart';
+import 'package:synthcv/screens/ats_analysis.dart';
+import 'package:synthcv/screens/ats_analysis_screen.dart';
 import 'splash_screen.dart';
 
 void main() async {
@@ -57,7 +59,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         fontFamily: 'Montserrat',
       ),
-      home: const SplashScreen(),
+      home: const ATSAnalysis(score: {},),
     );
   }
 }

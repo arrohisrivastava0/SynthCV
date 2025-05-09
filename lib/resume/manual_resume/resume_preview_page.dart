@@ -1302,17 +1302,17 @@ class ResumePreviewPage extends StatelessWidget {
         const SnackBar(content: Text('Resume submitted successfully!')),
       );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => JobDescriptionInputScreen(
-            onJobDescriptionSubmitted: (jdText) {
-              // Save to Supabase or pass to AI for keyword extraction
-              print('JD submitted: $jdText');
-            },
-          ),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => JobDescriptionInputScreen(
+      //       onJobDescriptionSubmitted: (jdText) {
+      //         // Save to Supabase or pass to AI for keyword extraction
+      //         print('JD submitted: $jdText');
+      //       },
+      //     ),
+      //   ),
+      // );
 
     } on PostgrestException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

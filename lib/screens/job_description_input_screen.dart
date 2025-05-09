@@ -88,150 +88,26 @@ import 'package:synthcv/services/gemini_service.dart';
 import 'package:synthcv/widget/simple_neon_button.dart';
 
 class JobDescriptionInputScreen extends StatefulWidget {
-  final Function(String) onJobDescriptionSubmitted;
+  // final Function(String) onJobDescriptionSubmitted;
+  final String resumeIdInit;
 
   const JobDescriptionInputScreen(
-      {required this.onJobDescriptionSubmitted, super.key});
+      {
+        // required this.onJobDescriptionSubmitted,
+        super.key, required this.resumeIdInit});
 
   @override
   State<JobDescriptionInputScreen> createState() =>
       _JobDescriptionInputScreenState();
 }
-//
-// class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
-//   File? _selectedFile;
-//   final TextEditingController _jdController = TextEditingController();
-//   String? uploadedJDText;
-//
-//   Future<void> _pickPDF() async {
-//     final result = await FilePicker.platform
-//         .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-//     if (result != null && result.files.single.path != null) {
-//       final filePath = result.files.single.path!;
-//       setState(() {
-//         _selectedFile = File(filePath);
-//       });
-//
-//       await extractTextFromPdf(filePath);
-//     }
-//   }
-//
-//   // Future<List<int>> _readDocumentData(File file) async {
-//   //   final ByteData data = await rootBundle.load(file.path);
-//   //   return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-//   // }
-//
-//   Future<void> extractTextFromPdf(String path) async {
-//     final File file = File(path);
-//     final List<int> bytes = await file.readAsBytes();
-//
-//     // Load PDF
-//     final PdfDocument document = PdfDocument(inputBytes: bytes);
-//
-//     // Extract all text
-//     String text = PdfTextExtractor(document).extractText();
-//     print("Extracted text: $text");
-//     document.dispose();
-//   }
-//
-//   Future<void> _submitJD() async {
-//     final supabase = Supabase.instance.client;
-//     final user = supabase.auth.currentUser;
-//
-//     if (user == null) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//             content: Text('You must be logged in to submit a resume.')),
-//       );
-//       return;
-//     }
-//
-//     // await extractTextFromPdf(_selectedFile!.path);
-//
-//     final jd = _jdController.text.trim();
-//
-//     if (jd.isNotEmpty) {
-//       widget.onJobDescriptionSubmitted(jd);
-//       try {
-//         await supabase.from('job_descriptions').insert({
-//           'user_id': user.id,
-//           'jd_text': jd,
-//           'created_at': DateTime.now().toIso8601String(),
-//         });
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text('Job description submitted!')),
-//         );
-//       } on PostgrestException catch (e) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text('Supabase error: ${e.message}')),
-//         );
-//         print('PostgrestException: $e');
-//       } catch (e) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text('Unexpected error: $e')),
-//         );
-//         print('Unexpected error: $e');
-//       }
-//     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(
-//             content: Text('Please enter or upload a job description.')),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Job Description"),
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//       ),
-//       body: Container(
-//         padding: const EdgeInsets.all(20),
-//         width: double.infinity,
-//         decoration: const BoxDecoration(
-//           gradient: LinearGradient(
-//             colors: [Color(0xFF121212), Color(0xFF1A1B2F)],
-//             begin: Alignment.topLeft,
-//             end: Alignment.bottomRight,
-//           ),
-//         ),
-//         child: SingleChildScrollView(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               _NeonButton(
-//                 onPressed: _pickPDF,
-//                 icon: Icons.upload_file,
-//                 label: "Upload JD as PDF",
-//                 glowColor: Colors.cyanAccent,
-//               ),
-//               const SizedBox(height: 24),
-//               _GlowingTextField(
-//                 controller: _jdController,
-//                 hint: "Paste or edit job description here...",
-//               ),
-//               const SizedBox(height: 30),
-//               _NeonButton(
-//                 onPressed: _submitJD,
-//                 label: "Submit Job Description",
-//                 glowColor: Colors.purpleAccent,
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
   File? _selectedFile;
   final TextEditingController _jdController = TextEditingController();
   bool _isPDFSelected = false;
   bool _isTextEntered = false;
+
+  String? jdId;
 
   Future<void> _pickPDF() async {
     final result = await FilePicker.platform
@@ -285,31 +161,26 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
     try {
       final structured = await GeminiService.extractJobDescriptionJSON(jdContent);
 
-      await supabase.from('job_descriptions').insert({
+      final response = await supabase.from('job_descriptions').insert({
         'user_id': user.id,
         'jd_json': structured,
         'created_at': DateTime.now().toIso8601String(),
-      });
+      }).select().single();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Job description submitted!')),
       );
 
+      final atsData = await fetchATSResult(
+        resumeIdInit: widget.resumeIdInit,
+        jdId: response['id'],
+      );
+
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => ATSAnalysisScreen(
-            atsScore: 78,
-            matchPercentage: 82,
-            hiringProbability: "Moderate",
-            suggestions: [
-              "Add 'Firebase' under skills.",
-              "Mention your internship at ABC in the experience section.",
-              "Highlight your leadership in project XYZ."
-            ],
-            onRegenerateResume: () {
-              // Navigate to resume builder or call regeneration logic
-            },
+          builder: (_) => ATSAnalysis(
+            score: atsData,
           ),
         ),
       );
@@ -320,6 +191,32 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
       );
     }
   }
+
+  Future<Map<String, dynamic>?> fetchATSResult({
+    required String resumeIdInit,
+    required String jdId,
+  }) async {
+    final supabase = Supabase.instance.client;
+
+    final response = await supabase
+        .from('ats_results')
+        .select()
+        .eq('resume_id_init', resumeIdInit)
+        .eq('jd_id', jdId)
+        .order('created_at', ascending: false)
+        .limit(1)
+        .select()
+        .single()
+        .maybeSingle();
+
+    if (response == null) {
+      print('❌ No ATS score found');
+      return null;
+    }
+
+    return response;
+  }
+
 
 
 
