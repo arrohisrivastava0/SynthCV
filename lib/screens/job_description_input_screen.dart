@@ -171,19 +171,12 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
         const SnackBar(content: Text('Job description submitted!')),
       );
 
-      final atsData = await fetchATSResult(
+      await fetchATSResult(
         resumeIdInit: widget.resumeIdInit,
         jdId: response['id'],
       );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ATSAnalysis(
-            score: atsData,
-          ),
-        ),
-      );
+
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -192,29 +185,64 @@ class _JobDescriptionInputScreenState extends State<JobDescriptionInputScreen> {
     }
   }
 
-  Future<Map<String, dynamic>?> fetchATSResult({
+  Future<void> fetchATSResult({
     required String resumeIdInit,
     required String jdId,
   }) async {
+
     final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
 
-    final response = await supabase
-        .from('ats_results')
-        .select()
-        .eq('resume_id_init', resumeIdInit)
-        .eq('jd_id', jdId)
-        .order('created_at', ascending: false)
-        .limit(1)
-        .select()
-        .single()
-        .maybeSingle();
-
-    if (response == null) {
-      print('❌ No ATS score found');
-      return null;
+    if (user == null) {
+      print('❌ User not logged in');
+      return;
     }
+    try {
+      final responseRes = await supabase
+          .from('uploaded_resumes')
+          .select()
+          .eq('id', resumeIdInit)
+          .single();
+      final resumeJon = responseRes['resume_json'];
+      
+      final responseJd = await supabase
+          .from('job_descriptions')
+          .select()
+          .eq('id', jdId)
+          .single();
+      final jdJson = responseJd['jd_json'];
+      
+      final atsScoreJson = await GeminiService.compareResumeWithJD(
+        resumeJson: resumeJon,
+        jdJson: jdJson,
+      );
+      
+      if (atsScoreJson == null) {
+        print('❌ Gemini returned null ATS data');
+        return;
+      }
+      
+      final atsResponse = await supabase.from('ats_results').insert({
+        'user_id': user.id,
+        'resume_id_init': resumeIdInit,
+        'jd_id': jdId,
+        'init_json': atsScoreJson,
+        'created_at': DateTime.now().toIso8601String(),
+      }).select().single();
 
-    return response;
+      print("✅ ATS score inserted with ID: ${atsResponse['id']}");
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ATSAnalysis(
+            score: atsResponse['init_json'],
+          ),
+        ),
+      );
+    } catch (e) {
+      print('❌ Failed to generate/store ATS result: $e');
+    }
   }
 
 

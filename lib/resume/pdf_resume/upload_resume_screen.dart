@@ -192,7 +192,8 @@ class _UploadResumeScreenState extends State<UploadResumeScreen> {
       final response= await supabase.from('uploaded_resumes').insert({
         'user_id': user.id,
         'resume_json': structured,
-      }).select()
+      })
+          .select()
         .single();
 
       ScaffoldMessenger.of(context).showSnackBar(

@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         fontFamily: 'Montserrat',
       ),
-      home: const ATSAnalysis(score: {},),
+      home: const Login(),
     );
   }
 }

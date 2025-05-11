@@ -207,15 +207,17 @@ Extract this as structured JSON:
     final prompt = '''
     
 You are an ATS (Applicant Tracking System) evaluation engine.
-Compare the following resume with the job description strictly, keeping in mind the keywords, the quality of the resume and etc and provide:
+Compare the following resume with the job description very very strictly, such that if you estimate the score to be good, then repeat the analysis process and level the score down little bit until you are satisfied with the final score leaving no flaws left, since there will always be a missing skill definitely, to achieve perfection, keeping in mind the keywords, the quality of the resume and etc. Deeply analyze the resume and the job description to generate improvements based on very small details which may or may not be mentioned explicitly, and provide:
 
-1. ATS Match Score (out of 100)
-2. Chance of getting hired (choose from [Excellent, Strong, Good, Fair, Low])
-3. Matching Skills
-4. Missing Skills
-5. Short summary of the analysis in active voice, as if talking directly to the candidate
-6. Areas of Improvement (suggestions)
-7. Very short key points for suggestions to improve
+1. ATS Score (out of 100)
+2. Keyword match percentage
+3. Chance of getting hired (choose from [Excellent (ats score range: 85–100), Strong(ats score range: 70–84), Good(ats score range: 55–69), Fair(ats score range: 40–54), Low(ats score range: Below 40)])
+4. Matching Skills
+5. Missing Skills
+6. Short summary of the analysis in active voice, as if talking directly to the candidate
+7. Several deeply analyzed areas of Improvement (suggestions) with a title and a description [{"title": ' ', "description": ' '}]
+8. Very short key points for suggestions to improve
+9. Keyword Density: Number of times key terms appear
 
 Resume:
 ${jsonEncode(resumeJson)}
@@ -223,26 +225,29 @@ ${jsonEncode(resumeJson)}
 Job Description:
 ${jsonEncode(jdJson)}
 
-Respond in JSON format:
+Respond in this example JSON format:
 {
-  "ats_score": 87,
-  "hiring_probability": Strong
+  "ats_score": any precise value between 1-100 can be float,
+  "match_percentage" : 67.5 (float)
+  "hiring_probability": " "
   "matching_skills": [...],
   "missing_skills": [...],
   "analysis_summary":"abc.. ",
-  "suggestions": [...]
+  "suggestions": [{"title": ' ', "description": ' '}]
   "key_suggestions": [...]
+  "keyword_density": ["keyword": ' ', "frequency": 2]
 }
 ''';
 
     final raw = await _getRawGeminiResponse(prompt);
     if (raw == null) return null;
-
     try {
-      return jsonDecode(raw);
+      final cleaned = _stripMarkdownCodeBlock(raw);
+      return jsonDecode(cleaned);
     } catch (e) {
-      print("❌ Failed to parse ATS comparison: $e");
+      print("❌ Error parsing Gemini response: $e");
       return null;
     }
+
   }
 }
