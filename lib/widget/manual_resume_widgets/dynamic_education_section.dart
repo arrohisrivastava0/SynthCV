@@ -233,13 +233,11 @@ class DynamicEducationSectionState extends State<DynamicEducationSection> with A
 
     if (_highestEducation == "Post-Graduation") {
       education.add({
-        'level': 'Post-Graduation',
+        'grade': pgCgpaController.text.trim(),
         'degree': pgDegreeController.text.trim(),
-        'university': pgUniController.text.trim(),
+        'location': "${pgCityController.text.trim()}, ${pgStateController.text.trim()}",
+        'institution': pgUniController.text.trim(),
         'graduation_year': pgYearController.text.trim(),
-        'cgpa': pgCgpaController.text.trim(),
-        'city': pgCityController.text.trim(),
-        'state': pgStateController.text.trim(),
       });
     }
 
