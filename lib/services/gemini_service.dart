@@ -161,7 +161,8 @@ Here is an example resultant JSON:
     return generateStructuredMap(prompt);
   }
 
-  static Future<Map<String, dynamic>?> extractJobDescriptionJSON(String jdText) {
+  static Future<Map<String, dynamic>?> extractJobDescriptionJSON(
+      String jdText) {
     final prompt = '''
 Here is a job description:
 
@@ -183,7 +184,6 @@ Extract this as structured JSON:
     final match = regex.firstMatch(text.trim());
     return match != null ? match.group(1)!.trim() : text;
   }
-
 
   /// ✅ Returns parsed JSON from Gemini as a Map
   static Future<Map<String, dynamic>?> generateStructuredMap(
@@ -248,6 +248,75 @@ Respond in this example JSON format:
       print("❌ Error parsing Gemini response: $e");
       return null;
     }
+  }
 
+  static Future<Map<String, dynamic>?> getResumeScore({
+    required Map<String, dynamic> resumeJson,
+  }) async {
+    final prompt = '''
+    You are an advanced Applicant Tracking System (ATS) and Resume Evaluation Engine. Analyze the following resume, which has been extracted from a PDF and structured into JSON format. Your task is to critically and objectively evaluate the resume quality based on industry-standard best practices and ATS scoring logic.
+Focus your evaluation on the following aspects (but not limited to):
+    Presence and quality of key resume sections (education, experience, projects, skills, etc.)
+
+Quantifiable achievements and impact in experience bullet points
+
+Use of action-oriented, concise, and active voice language
+
+Avoidance of repeated phrases, buzzwords, and vague terminology
+
+Clarity, structure, and readability of content
+
+Bullet point length and content density (ideally ≤ 50 words)
+
+Use of ATS-relevant keywords based on standard tech/industry practices
+
+Consistency in formatting, dates, and ordering
+
+Resume length and overall balance
+
+Signals of progression, initiative, and role evolution
+
+Presence of grammar/spelling errors or fluff sections    
+
+here is the resume:
+${jsonEncode(resumeJson)}
+
+return the analysis in a structured json format with the following keys
+{
+"resume_score": <float between 0-100>,
+"strengths": [
+{
+"area": "e.g. Project Descriptions",
+"comment": "Project section shows clear technical ownership.",
+"score_impact": +5
+},
+...
+],
+"areas_of_improvement": [
+{
+"area": "e.g. Experience Bullet Points",
+"comment": "Lack of metrics and quantified outcomes.",
+"score_impact": -6
+},
+...
+],
+"overall_summary": "A brief summary (~2-3 lines), in direct speech, summarizing the resume quality and key takeaways.",
+"key_recommendations": [
+"Add more quantifiable achievements in your work experience.",
+"Avoid using repeated generic terms like 'responsible for'.",
+"Refine your bullet points to be more concise and action-oriented."
+]
+}
+    ''';
+
+    final raw = await _getRawGeminiResponse(prompt);
+    if (raw == null) return null;
+    try {
+      final cleaned = _stripMarkdownCodeBlock(raw);
+      return jsonDecode(cleaned);
+    } catch (e) {
+      print("❌ Error parsing Gemini response: $e");
+      return null;
+    }
   }
 }
