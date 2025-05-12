@@ -42,9 +42,9 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
               if (_namePromptController.text.trim().isNotEmpty) {
                 setState(() {
                   _projects.add({
+                    "date": TextEditingController(),
                     "name": _namePromptController.text.trim(),
-                    "keywords": TextEditingController(),
-                    "monthYear": TextEditingController(),
+                    "technologies": TextEditingController(),
                     "description": TextEditingController(),
                   });
                 });
@@ -206,9 +206,9 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
   List<Map<String, String>> getProjects() {
     return _projects.map((project) {
       return {
+        "date": (project["date"] as TextEditingController).text.trim(),
         "name": project["name"]?.toString() ?? '',
-        "keywords": (project["keywords"] as TextEditingController).text.trim(),
-        "monthYear": (project["monthYear"] as TextEditingController).text.trim(),
+        "technologies": (project["technologies"] as TextEditingController).text.trim(),
         "description": (project["description"] as TextEditingController).text.trim(),
       };
     }).where((p) => p.values.any((value) => value.isNotEmpty)).toList();
@@ -230,8 +230,8 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
           int index = entry.key;
           var project = entry.value;
           return _section(index, project["name"], [
-            buildInputField(hint: "Keywords (comma separated)", controller: project["keywords"]),
-            buildInputField(hint: "Month & Year", controller: project["monthYear"]),
+            buildInputField(hint: "Keywords (comma separated)", controller: project["technologies"]),
+            buildInputField(hint: "Month & Year", controller: project["date"]),
             buildInputField(hint: "Description", controller: project["description"]),
           ]);
         }),
