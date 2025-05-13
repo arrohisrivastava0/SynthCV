@@ -229,7 +229,7 @@ class _VisualScoreRowState extends State<VisualScoreRow> with SingleTickerProvid
         lineWidth: 8.0,
         percent: percent.clamp(0.0, 1.0),
         center: Text(
-          "${(percent * 100).toInt()}%",
+          "${(percent * 100)}%",
           style: GoogleFonts.rubik(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         progressColor: widget.color,

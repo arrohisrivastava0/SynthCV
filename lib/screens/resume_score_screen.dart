@@ -144,90 +144,10 @@ class ResumeScoreScreen extends StatelessWidget {
                         ],
                       ),
                       child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.check_circle,
-                                  color: Colors.greenAccent, size: 18),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          item['area'] ?? '',
-                                          style: GoogleFonts.rubik(
-                                            color: Colors.greenAccent,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Text(
-                                          item['score_impact'] ?? '',
-                                          style: GoogleFonts.rubik(
-                                            color: (item['score_impact'][0] == '+')
-                                                ? Colors.green
-                                                : Colors.red,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      item['comment'] ?? '',
-                                      style: GoogleFonts.rubik(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              
-                            ],
-                          ),
-                          
-                        
-                    )
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  "Areas of Improvement:",
-                  style: GoogleFonts.orbitron(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orangeAccent,
-                    shadows: [
-                      const Shadow(blurRadius: 6, color: Colors.orangeAccent),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...areasOfImprovement.map((item) => Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.03),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.orangeAccent.withOpacity(0.3)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.orangeAccent.withOpacity(0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.error_outline,
-                              color: Colors.redAccent, size: 18),
+                          const Icon(Icons.check_circle,
+                              color: Colors.greenAccent, size: 18),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Column(
@@ -238,11 +158,12 @@ class ResumeScoreScreen extends StatelessWidget {
                                     Text(
                                       item['area'] ?? '',
                                       style: GoogleFonts.rubik(
-                                        color: Colors.white,
-                                        fontSize: 14,
+                                        color: Colors.greenAccent,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    const Spacer(),
                                     Text(
                                       item['score_impact'] ?? '',
                                       style: GoogleFonts.rubik(
@@ -269,6 +190,84 @@ class ResumeScoreScreen extends StatelessWidget {
                         ],
                       ),
                     )),
+                const SizedBox(height: 24),
+                Text(
+                  "Areas of Improvement:",
+                  style: GoogleFonts.orbitron(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.redAccent,
+                    shadows: [
+                      const Shadow(blurRadius: 6, color: Colors.redAccent),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...areasOfImprovement.map((item) => Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.03),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: Colors.redAccent.withOpacity(0.3)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.redAccent.withOpacity(0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              color: Colors.redAccent, size: 18),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      item['area'] ?? '',
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.redAccent,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      item['score_impact'] ?? '',
+                                      style: GoogleFonts.rubik(
+                                        color: (item['score_impact'][0] == '+')
+                                            ? Colors.green
+                                            : Colors.red,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  item['comment'] ?? '',
+                                  style: GoogleFonts.rubik(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                const SizedBox(height: 24),
                 Text(
                   "Suggestions to Improve:",
                   style: GoogleFonts.orbitron(
