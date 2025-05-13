@@ -18,6 +18,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/auth/login.dart';
 import 'package:synthcv/screens/ats_analysis.dart';
 import 'package:synthcv/screens/ats_analysis_screen.dart';
+import 'package:synthcv/screens/resume_score_screen.dart';
 import 'splash_screen.dart';
 
 void main() async {
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         fontFamily: 'Montserrat',
       ),
-      home: const Login(),
+      home: const ResumeScoreScreen(score: {},),
     );
   }
 }

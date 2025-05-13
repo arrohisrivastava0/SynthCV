@@ -310,7 +310,8 @@ class HomeScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Welcome, $displayName',
+                  'Welcome, Arrohi',
+                      // '$displayName',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

@@ -81,13 +81,13 @@ class ATSAnalysis extends StatelessWidget {
               const SizedBox(height: 24),
               VisualScoreRow(
                 label: "ATS Score",
-                percent: atsScore / 100,
+                percent: atsScore,
                 color: Colors.cyanAccent,
               ),
 
               VisualScoreRow(
                 label: "Match Percentage",
-                percent: matchPer / 100,
+                percent: matchPer,
                 color: Colors.orangeAccent,
                 reverse: true,
               ),
