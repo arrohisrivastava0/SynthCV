@@ -73,7 +73,7 @@ class ResumeScoreScreen extends StatelessWidget {
                   style: GoogleFonts.orbitron(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent,
+                    color: Colors.purpleAccent,
                     shadows: [
                       const Shadow(blurRadius: 6, color: Colors.purpleAccent),
                     ],
@@ -143,47 +143,57 @@ class ResumeScoreScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                      child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Icon(Icons.check_circle,
                                   color: Colors.greenAccent, size: 18),
                               const SizedBox(width: 6),
-                              Text(
-                                item['area'] ?? '',
-                                style: GoogleFonts.rubik(
-                                  color: Colors.greenAccent,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          item['area'] ?? '',
+                                          style: GoogleFonts.rubik(
+                                            color: Colors.greenAccent,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Text(
+                                          item['score_impact'] ?? '',
+                                          style: GoogleFonts.rubik(
+                                            color: (item['score_impact'][0] == '+')
+                                                ? Colors.green
+                                                : Colors.red,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      item['comment'] ?? '',
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const Spacer(),
-                              Text(
-                                item['score_impact'] ?? '',
-                                style: GoogleFonts.rubik(
-                                  color: (item['score_impact'][0] == '+')
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              
                             ],
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            item['comment'] ?? '',
-                            style: GoogleFonts.rubik(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                          
+                        
+                    )
+                ),
                 const SizedBox(height: 24),
                 Text(
                   "Areas of Improvement:",
