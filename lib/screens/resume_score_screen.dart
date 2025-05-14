@@ -1,16 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synthcv/widget/ats_analysis_widgets/visual_score.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class ResumeScoreScreen extends StatelessWidget {
+class ResumeScoreScreen extends StatefulWidget {
   final Map<String, dynamic>? score;
 
   const ResumeScoreScreen({super.key, required this.score});
 
   @override
+  State<ResumeScoreScreen> createState() => _ResumeScoreScreenState();
+
+}
+
+class _ResumeScoreScreenState extends State<ResumeScoreScreen> {
+  String resumeUrl = "https://hthievkrcnffgfzzuuye.supabase.co/storage/v1/object/sign/resumes/resumes/e7ed2f53-fd09-4ba0-9423-ac5782b20386/1746895638609.pdf?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5X2FhMzFjNzE0LTlhNTItNDhkNi1iMGZkLTAyMDQ0MTk2ZTQ1NCJ9.eyJ1cmwiOiJyZXN1bWVzL3Jlc3VtZXMvZTdlZDJmNTMtZmQwOS00YmEwLTk0MjMtYWM1NzgyYjIwMzg2LzE3NDY4OTU2Mzg2MDkucGRmIiwiaWF0IjoxNzQ3MTcxMjYwLCJleHAiOjE3NDc3NzYwNjB9._s6MpEEuS9VT1LDqS1arSv8OjGovSdDdEF-D3rog8UY";
+  bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // loadLatestResume();
+  }
+
+  Future<void> loadLatestResume() async {
+    final path = await fetchLatestResumePath();
+    if (path != null) {
+      final url = await getResumeDownloadUrl(path);
+      setState(() {
+        resumeUrl = url!;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<String?> fetchLatestResumePath() async {
+    final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) return null;
+
+    final response = await supabase.storage
+        .from('your_bucket_name') // e.g., 'resumes'
+        .list(path: 'resumes/$userId');
+
+    if (response.isEmpty) return null;
+
+    // Sort files by name assuming they're timestamps
+    response.sort((a, b) => b.name.compareTo(a.name)); // latest first
+
+    return 'resumes/$userId/${response.first.name}'; // latest file path
+  }
+
+  Future<String?> getResumeDownloadUrl(String filePath) async {
+    final supabase = Supabase.instance.client;
+
+    final result = await supabase.storage
+        .from('your_bucket_name') // same bucket
+        .createSignedUrl(filePath, 60 * 60); // valid for 1 hour
+
+    return result;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final double resumeScore = score?['resume_score'] ?? 77.6;
-    final List strengths = score?['strengths'] ??
+    final double resumeScore = widget.score?['resume_score'] ?? 77.6;
+    final List strengths = widget.score?['strengths'] ??
         [
           {
             "area": 'hehe',
@@ -18,7 +78,7 @@ class ResumeScoreScreen extends StatelessWidget {
             "score_impact": '+10'
           }
         ];
-    final List areasOfImprovement = score?['areas_of_improvement'] ??
+    final List areasOfImprovement = widget.score?['areas_of_improvement'] ??
         [
           {
             "area": 'hehe',
@@ -26,9 +86,9 @@ class ResumeScoreScreen extends StatelessWidget {
             "score_impact": '-9'
           }
         ];
-    final String overallSummary = score?['overall_summary'] ??
+    final String overallSummary = widget.score?['overall_summary'] ??
         "Your resume demonstrates a strong technical foundation for this Flutter Development internship. You clearly showcase experience with key required skills like Flutter, Firebase, Dart, REST API, and MVC through your projects and skills list. Your project work is directly relevant. To elevate your application further, you'll want to more explicitly align your resume with the 'Other Requirements' of the role, particularly by highlighting your interest in startups and your passion for Flutter development.";
-    final List<String> keyRecommendations = score?['key_recommendations'] ??
+    final List<String> keyRecommendations = widget.score?['key_recommendations'] ??
         [
           "Add a resume summary mentioning 'startup interest', 'passion for Flutter', 'clean code'.",
           "Use cover letter to explicitly confirm all eligibility (dates, WFH, duration) and 'other requirements'.",
@@ -36,13 +96,21 @@ class ResumeScoreScreen extends StatelessWidget {
           "Ensure 'Mobile Application Development' is clear in skills."
         ];
 
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (resumeUrl == null) {
+      return const Center(child: Text("No resume found."));
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Dashboard"),
           backgroundColor: const Color(0xFF121212),
           elevation: 0,
         ),
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Colors.transparent,
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -61,6 +129,16 @@ class ResumeScoreScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  "Uploaded Resume",
+                  style: GoogleFonts.orbitron(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.cyanAccent,
+                    shadows: const [Shadow(blurRadius: 6, color: Colors.cyanAccent)],
+                  ),
+                ),
+                SfPdfViewer.network(resumeUrl),
                 VisualScoreRow(
                   label: "Resume Score",
                   percent: resumeScore / 100,
