@@ -7,12 +7,12 @@ class NeonSection extends StatelessWidget {
   final Color accentColor;
 
   const NeonSection({
-    Key? key,
+    super.key,
     required this.title,
     required this.children,
     this.shadowColor = Colors.cyanAccent,
     this.accentColor = Colors.deepPurpleAccent,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
