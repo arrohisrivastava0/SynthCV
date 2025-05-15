@@ -6,11 +6,11 @@ class NeonButton extends StatelessWidget {
   final bool isLoading;
 
   const NeonButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.text = "Submit Resume",
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
