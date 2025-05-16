@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
+import 'package:synthcv/widget/manual_resume_widgets/section.dart';
 
 class ProjectsSection extends StatefulWidget {
   const ProjectsSection({Key? key}) : super(key: key);
+
   @override
   ProjectsSectionState createState() => ProjectsSectionState();
 }
 
-class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliveClientMixin{
+class ProjectsSectionState extends State<ProjectsSection>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
   List<Map<String, dynamic>> _projects = [];
@@ -19,7 +22,8 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.black87,
-        title: const Text("Enter Project Name", style: TextStyle(color: Colors.white)),
+        title: const Text("Enter Project Name",
+            style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: _namePromptController,
           style: const TextStyle(color: Colors.white),
@@ -28,16 +32,20 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
             hintStyle: const TextStyle(color: Colors.white54),
             filled: true,
             fillColor: Colors.white.withOpacity(0.1),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
           ),
         ),
         actions: [
           TextButton(
-            child: const Text("Cancel", style: TextStyle(color: Colors.redAccent)),
+            child:
+                const Text("Cancel", style: TextStyle(color: Colors.redAccent)),
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: const Text("Add", style: TextStyle(color: Colors.cyanAccent)),
+            child:
+                const Text("Add", style: TextStyle(color: Colors.cyanAccent)),
             onPressed: () {
               if (_namePromptController.text.trim().isNotEmpty) {
                 setState(() {
@@ -58,13 +66,15 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
   }
 
   void _editProjectName(int index) {
-    final TextEditingController _editController = TextEditingController(text: _projects[index]["name"]);
+    final TextEditingController _editController =
+        TextEditingController(text: _projects[index]["name"]);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.black87,
-        title: const Text("Edit Project Name", style: TextStyle(color: Colors.white)),
+        title: const Text("Edit Project Name",
+            style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: _editController,
           style: const TextStyle(color: Colors.white),
@@ -73,16 +83,20 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
             hintStyle: const TextStyle(color: Colors.white54),
             filled: true,
             fillColor: Colors.white.withOpacity(0.1),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
           ),
         ),
         actions: [
           TextButton(
-            child: const Text("Cancel", style: TextStyle(color: Colors.redAccent)),
+            child:
+                const Text("Cancel", style: TextStyle(color: Colors.redAccent)),
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: const Text("Save", style: TextStyle(color: Colors.cyanAccent)),
+            child:
+                const Text("Save", style: TextStyle(color: Colors.cyanAccent)),
             onPressed: () {
               if (_editController.text.trim().isNotEmpty) {
                 setState(() {
@@ -102,7 +116,6 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
       _projects.removeAt(index);
     });
   }
-
 
   // Widget _section(int index, Map<String, dynamic> project) {
   //   return Container(
@@ -149,7 +162,6 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
   //     ),
   //   );
   // }
-
 
   Widget _section(int index, String title, List<Widget> children) {
     return Container(
@@ -204,16 +216,20 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
   }
 
   List<Map<String, String>> getProjects() {
-    return _projects.map((project) {
-      return {
-        "date": (project["date"] as TextEditingController).text.trim(),
-        "name": project["name"]?.toString() ?? '',
-        "technologies": (project["technologies"] as TextEditingController).text.trim(),
-        "description": (project["description"] as TextEditingController).text.trim(),
-      };
-    }).where((p) => p.values.any((value) => value.isNotEmpty)).toList();
+    return _projects
+        .map((project) {
+          return {
+            "date": (project["date"] as TextEditingController).text.trim(),
+            "name": project["name"]?.toString() ?? '',
+            "technologies":
+                (project["technologies"] as TextEditingController).text.trim(),
+            "description":
+                (project["description"] as TextEditingController).text.trim(),
+          };
+        })
+        .where((p) => p.values.any((value) => value.isNotEmpty))
+        .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -229,18 +245,48 @@ class ProjectsSectionState extends State<ProjectsSection> with AutomaticKeepAliv
         ..._projects.asMap().entries.map((entry) {
           int index = entry.key;
           var project = entry.value;
-          return _section(index, project["name"], [
-            buildInputField(hint: "Keywords (comma separated)", controller: project["technologies"]),
-            buildInputField(hint: "Month & Year", controller: project["date"]),
-            buildInputField(hint: "Description", controller: project["description"]),
-          ]);
+          return FormSectionCard(
+            title: "Project 1",
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.white70, size: 20),
+                  onPressed: () => _editProjectName(index),
+                  tooltip: 'Edit project name',
+                ),
+                IconButton(
+                  icon:
+                      const Icon(Icons.delete, color: Colors.white70, size: 20),
+                  onPressed: () => _deleteProject(index),
+                  tooltip: 'Delete project',
+                ),
+              ],
+            ),
+            children: [
+              buildInputField(
+                  hint: "Keywords (comma separated)",
+                  controller: project["technologies"]),
+              buildInputField(
+                  hint: "Month & Year", controller: project["date"]),
+              buildInputField(
+                  hint: "Description", controller: project["description"]),
+            ],
+          );
+
+          // return _section(index, project["name"], [
+          //   buildInputField(hint: "Keywords (comma separated)", controller: project["technologies"]),
+          //   buildInputField(hint: "Month & Year", controller: project["date"]),
+          //   buildInputField(hint: "Description", controller: project["description"]),
+          // ]);
         }),
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: _promptAndAddProject,
             icon: const Icon(Icons.add, color: Colors.cyanAccent),
-            label: const Text("Add Project", style: TextStyle(color: Colors.cyanAccent)),
+            label: const Text("Add Project",
+                style: TextStyle(color: Colors.cyanAccent)),
           ),
         ),
       ],

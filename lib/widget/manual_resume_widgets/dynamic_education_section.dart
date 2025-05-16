@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
+import 'package:synthcv/widget/manual_resume_widgets/section.dart';
 
 class DynamicEducationSection extends StatefulWidget {
   const DynamicEducationSection({Key? key}) : super(key: key);
@@ -330,14 +331,25 @@ class DynamicEducationSectionState extends State<DynamicEducationSection>
         ...educationControllers.asMap().entries.map((entry) {
           // int index = entry.key;
           var edu = entry.value;
-          return section([
-            buildInputField(hint: "Degree*", controller: edu["degree"]!),
-            buildInputField(hint: "Institute*", controller: edu["institute"]!),
-            buildInputField(
-                hint: "Graduation Year*", controller: edu["graduation_year"]!),
-            buildInputField(hint: "Percentage/GPA*", controller: edu["cgpa"]!),
-            buildInputField(hint: "Location", controller: edu["location"]!),
-          ]);
+          return FormSectionCard(
+            children: [
+                buildInputField(hint: "Degree*", controller: edu["degree"]!),
+                buildInputField(hint: "Institute*", controller: edu["institute"]!),
+                buildInputField(
+                    hint: "Graduation Year*", controller: edu["graduation_year"]!),
+                buildInputField(hint: "Percentage/GPA*", controller: edu["cgpa"]!),
+                buildInputField(hint: "Location", controller: edu["location"]!),
+            ],
+          );
+
+          // return section([
+          //   buildInputField(hint: "Degree*", controller: edu["degree"]!),
+          //   buildInputField(hint: "Institute*", controller: edu["institute"]!),
+          //   buildInputField(
+          //       hint: "Graduation Year*", controller: edu["graduation_year"]!),
+          //   buildInputField(hint: "Percentage/GPA*", controller: edu["cgpa"]!),
+          //   buildInputField(hint: "Location", controller: edu["location"]!),
+          // ]);
         }),
         Align(
           alignment: Alignment.centerLeft,
