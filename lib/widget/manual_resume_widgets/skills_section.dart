@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
 
 class SkillsSection extends StatefulWidget {
-  const SkillsSection({Key? key}) : super(key: key); // Add key here
+  const SkillsSection({super.key}); // Add key here
   @override
   SkillsSectionState createState() => SkillsSectionState();
 }

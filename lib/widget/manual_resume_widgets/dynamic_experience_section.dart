@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:synthcv/widget/buildInputField.dart';
+import 'package:synthcv/widget/manual_resume_widgets/section.dart';
 
 class ExperienceSection extends StatefulWidget {
   const ExperienceSection({Key? key}) : super(key: key);
+
   @override
   ExperienceSectionState createState() => ExperienceSectionState();
 }
 
-class ExperienceSectionState extends State<ExperienceSection> with AutomaticKeepAliveClientMixin{
+class ExperienceSectionState extends State<ExperienceSection>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
   List<Map<String, TextEditingController>> workExperienceControllers = [];
@@ -24,14 +27,18 @@ class ExperienceSectionState extends State<ExperienceSection> with AutomaticKeep
     setState(() {});
   }
 
-  Widget _experienceFields(Map<String, TextEditingController> exp, {required bool isWork}) {
+  Widget _experienceFields(Map<String, TextEditingController> exp,
+      {required bool isWork}) {
     return Column(
       children: [
-        buildInputField(hint: isWork ? 'Role' : 'Position', controller: exp['role']!),
-        buildInputField(hint: 'Company / Organization', controller: exp['company']!),
+        buildInputField(
+            hint: isWork ? 'Role' : 'Position', controller: exp['role']!),
+        buildInputField(
+            hint: 'Company / Organization', controller: exp['company']!),
         buildInputField(hint: 'Start (Month, Year)', controller: exp['start']!),
         buildInputField(hint: 'End (Month, Year)', controller: exp['end']!),
-        buildInputField(hint: 'Description', controller: exp['description']!, maxLines: 2),
+        buildInputField(
+            hint: 'Description', controller: exp['description']!, maxLines: 2),
         const SizedBox(height: 20),
       ],
     );
@@ -73,16 +80,20 @@ class ExperienceSectionState extends State<ExperienceSection> with AutomaticKeep
   }
 
   Map<String, List<Map<String, String>>> getExperiences() {
-    List<Map<String, String>> extractData(List<Map<String, TextEditingController>> controllers) {
-      return controllers.map((entry) {
-        return {
-          'role': entry['role']!.text.trim(),
-          'company': entry['company']!.text.trim(),
-          'start': entry['start']!.text.trim(),
-          'end': entry['end']!.text.trim(),
-          'description': entry['description']!.text.trim(),
-        };
-      }).where((entry) => entry.values.any((v) => v.isNotEmpty)).toList();
+    List<Map<String, String>> extractData(
+        List<Map<String, TextEditingController>> controllers) {
+      return controllers
+          .map((entry) {
+            return {
+              'role': entry['role']!.text.trim(),
+              'company': entry['company']!.text.trim(),
+              'start': entry['start']!.text.trim(),
+              'end': entry['end']!.text.trim(),
+              'description': entry['description']!.text.trim(),
+            };
+          })
+          .where((entry) => entry.values.any((v) => v.isNotEmpty))
+          .toList();
     }
 
     return {
@@ -91,31 +102,37 @@ class ExperienceSectionState extends State<ExperienceSection> with AutomaticKeep
     };
   }
 
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Column(
       children: [
-        _section("Work Experience", [
-          ...workExperienceControllers.map((e) => _experienceFields(e, isWork: true)),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              onPressed: () => _addExperience(workExperienceControllers),
-              icon: const Icon(Icons.add, color: Colors.cyanAccent),
-              label: const Text("Add Work Experience", style: TextStyle(color: Colors.cyanAccent)),
+        FormSectionCard(
+          title: "Work Experience",
+          children: [
+            ...workExperienceControllers
+                .map((e) => _experienceFields(e, isWork: true)),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => _addExperience(workExperienceControllers),
+                icon: const Icon(Icons.add, color: Colors.cyanAccent),
+                label: const Text("Add Work Experience",
+                    style: TextStyle(color: Colors.cyanAccent)),
+              ),
             ),
-          ),
-        ]),
-        _section("Leadership Experience", [
-          ...leadershipControllers.map((e) => _experienceFields(e, isWork: false)),
+          ],
+        ),
+        FormSectionCard(title: "Leadership Experience", children:[
+          ...leadershipControllers
+              .map((e) => _experienceFields(e, isWork: false)),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () => _addExperience(leadershipControllers),
               icon: const Icon(Icons.add, color: Colors.purpleAccent),
-              label: const Text("Add Leadership Experience", style: TextStyle(color: Colors.purpleAccent)),
+              label: const Text("Add Leadership Experience",
+                  style: TextStyle(color: Colors.purpleAccent)),
             ),
           ),
         ]),
