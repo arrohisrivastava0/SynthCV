@@ -5,7 +5,7 @@ class FormSectionCard extends StatelessWidget {
   final List<Widget> children;
   final Widget? trailing; // Optional: Row of icons like edit/delete
 
-  const FormSectionCard(String s, {
+  const FormSectionCard({
     super.key,
     this.title,
     required this.children,
