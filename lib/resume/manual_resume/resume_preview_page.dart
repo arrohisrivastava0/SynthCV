@@ -1279,7 +1279,7 @@ class ResumePreviewPage extends StatelessWidget {
   // 'skills': resumeData['skills'],
   // 'projects': resumeData['projects'],
   // 'certifications': resumeData['certifications'],
-
+//just for a commit
   void submitResume(BuildContext context) async {
     final supabase = Supabase.instance.client;
     final user = supabase.auth.currentUser;
